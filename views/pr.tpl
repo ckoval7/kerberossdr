@@ -2,7 +2,9 @@
 <meta content="width=device-width, initial-scale=1" name="viewport" />
 <meta http-equiv="Cache-control" content="no-cache" charset="utf-8">
 <link rel="stylesheet" type="text/css" href="static/style.css">
-<p class="header"><a href="/init">Configuration and Spectrum</a> | <a href="/sync">Sync</a> | <a href="/doa">DOA Estimation</a> | <a href="/pr">Passive Radar</a></p>
+<p class="header"><a class="header_init" href="/init">Configuration and Spectrum</a> | <a class="header_sync" href="/sync">Sync</a> |
+  <a class="header_doa" href="/doa">DOA Estimation</a> | <a class="header_pr" href="/pr">Passive Radar</a>
+</p>
 <hr>
 <h2>Passive Radar</h2>
 <form action="/pr" method="post">

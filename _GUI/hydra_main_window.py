@@ -87,8 +87,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tabWidget.setCurrentIndex(0)
 
         # Set pyqtgraph to use white background, black foreground
-        pg.setConfigOption('background', 'w')
-        pg.setConfigOption('foreground', 'k')
+        pg.setConfigOption('background', (61, 61, 61))
+        pg.setConfigOption('foreground', 'w')
         pg.setConfigOption('imageAxisOrder', 'row-major')
         #pg.setConfigOption('useOpenGL', True)
         #pg.setConfigOption('useWeave', True)
@@ -110,10 +110,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         x = np.arange(1000)
         y = np.random.normal(size=(4,1000))
 
-        self.spectrum_ch1_curve = self.plotWidget_spectrum_ch1.plot(x, y[0], clear=True, pen='b')
+        self.spectrum_ch1_curve = self.plotWidget_spectrum_ch1.plot(x, y[0], clear=True, pen=(255, 199, 15))
         self.spectrum_ch2_curve = self.plotWidget_spectrum_ch2.plot(x, y[1], clear=True, pen='r')
         self.spectrum_ch3_curve = self.plotWidget_spectrum_ch3.plot(x, y[2], clear=True, pen='g')
-        self.spectrum_ch4_curve = self.plotWidget_spectrum_ch4.plot(x, y[3], clear=True, pen='c')
+        self.spectrum_ch4_curve = self.plotWidget_spectrum_ch4.plot(x, y[3], clear=True, pen=(9, 237, 237))
 
 
         self.plotWidget_spectrum_ch1.setLabel("bottom", "Frequency [MHz]")
@@ -164,10 +164,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.plotWidget_DOA.addLegend()
 
-        self.plotWidget_DOA.plot(x, y[0], pen=pg.mkPen('b', width=2), name="Bartlett")
+        self.plotWidget_DOA.plot(x, y[0], pen=pg.mkPen((255, 199, 15), width=2), name="Bartlett")
         self.plotWidget_DOA.plot(x, y[1], pen=pg.mkPen('g', width=2), name="Capon")
         self.plotWidget_DOA.plot(x, y[2], pen=pg.mkPen('r', width=2), name="MEM")
-        self.plotWidget_DOA.plot(x, y[3], pen=pg.mkPen('c', width=2), name="MUSIC")
+        self.plotWidget_DOA.plot(x, y[3], pen=pg.mkPen((9, 237, 237), width=2), name="MUSIC")
 
         #---> Passive radar results display <---
 
@@ -605,7 +605,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 #        if(xcorr12[0] != 0 and xcorr13[0] != 0 and xcorr14[0] != 0):
         self.plotWidget_sync_absx.clear()
 
-        self.plotWidget_sync_absx.plot(delay_label, xcorr12[N-M:N+M+1], pen='b')
+        self.plotWidget_sync_absx.plot(delay_label, xcorr12[N-M:N+M+1], pen=(255, 199, 15))
         self.plotWidget_sync_absx.plot(delay_label, xcorr13[N-M:N+M+1], pen='r')
         self.plotWidget_sync_absx.plot(delay_label, xcorr14[N-M:N+M+1], pen='g')
 
@@ -613,7 +613,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.plotWidget_sync_sampd.clear()
 
-        self.plotWidget_sync_sampd.plot(self.module_signal_processor.delay_log[0,:], pen='b')
+        self.plotWidget_sync_sampd.plot(self.module_signal_processor.delay_log[0,:], pen=(255, 199, 15))
         self.plotWidget_sync_sampd.plot(self.module_signal_processor.delay_log[1,:], pen='r')
         self.plotWidget_sync_sampd.plot(self.module_signal_processor.delay_log[2,:], pen='g')
 
@@ -629,7 +629,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.plotWidget_sync_phasediff.clear()
 
-        self.plotWidget_sync_phasediff.plot(self.module_signal_processor.phase_log[0,:], pen='b')
+        self.plotWidget_sync_phasediff.plot(self.module_signal_processor.phase_log[0,:], pen=(255, 199, 15))
         self.plotWidget_sync_phasediff.plot(self.module_signal_processor.phase_log[1,:], pen='r')
         self.plotWidget_sync_phasediff.plot(self.module_signal_processor.phase_log[2,:], pen='g')
 
@@ -639,7 +639,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.export_sync.export('/ram/sync.jpg')
 
 
-    def DOA_plot_helper(self, DOA_data, incident_angles, log_scale_min=None, color='b', legend=None):
+    def DOA_plot_helper(self, DOA_data, incident_angles, log_scale_min=None, color=(255, 199, 15), legend=None):
 
         DOA_data = np.divide(np.abs(DOA_data), np.max(np.abs(DOA_data))) # normalization
         if(log_scale_min != None):
@@ -670,7 +670,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.module_signal_processor.en_DOA_Bartlett:
 
-            plt = self.DOA_plot_helper(Bartlett, thetas, log_scale_min = -50, color='b')
+            plt = self.DOA_plot_helper(Bartlett, thetas, log_scale_min = -50, color=(255, 199, 15))
             COMBINED += np.divide(np.abs(Bartlett),np.max(np.abs(Bartlett)))
             #de.DOA_plot(Bartlett, thetas, log_scale_min = -50, axes=self.axes_DOA)
             DOA_results.append(thetas[np.argmax(Bartlett)])
@@ -691,7 +691,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         if self.module_signal_processor.en_DOA_MUSIC:
 
-            self.DOA_plot_helper(MUSIC, thetas, log_scale_min = -50, color='c')
+            self.DOA_plot_helper(MUSIC, thetas, log_scale_min = -50, color=(9, 237, 237))
             COMBINED += np.divide(np.abs(MUSIC),np.max(np.abs(MUSIC)))
             #de.DOA_plot(MUSIC, thetas, log_scale_min = -50, axes=self.axes_DOA)
             DOA_results.append(thetas[np.argmax(MUSIC)])
@@ -702,7 +702,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if len(DOA_results) != 0:
 
             # Combined Graph (beta)
-            COMBINED_LOG = self.DOA_plot_helper(COMBINED, thetas, log_scale_min = -50, color='k')
+            COMBINED_LOG = self.DOA_plot_helper(COMBINED, thetas, log_scale_min = -50, color=(163, 64, 245))
 
             confidence = scipy.signal.find_peaks_cwt(COMBINED_LOG, np.arange(10,30), min_snr=1) #np.max(DOA_combined**2) / np.average(DOA_combined**2)
             maxIndex = confidence[np.argmax(COMBINED_LOG[confidence])]

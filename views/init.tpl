@@ -1,28 +1,32 @@
 <html>
-<meta content="width=device-width, initial-scale=1" name="viewport" />
-<meta http-equiv="Cache-control" content="no-cache" charset="utf-8">
-<link rel="stylesheet" type="text/css" href="static/style.css">
-<script>
-function check_check_box() {
-var elms = document.getElementsByClassName('disable')
-    if (document.getElementById("uniform_gain_id").checked) {
-    for (var i = 0; i < elms.length; i++) {
-        elms[i].disabled=true;
+<head>
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+  <meta http-equiv="Cache-control" content="no-cache" charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="static/style.css">
+  <script>
+    function check_check_box() {
+      var elms = document.getElementsByClassName('disable')
+      if (document.getElementById("uniform_gain_id").checked) {
+        for (var i = 0; i < elms.length; i++) {
+          elms[i].disabled=true;
         }
         }
-    else {
-    for (var i = 0; i < elms.length; i++) {
-        elms[i].removeAttribute("disabled");
+      else {
+        for (var i = 0; i < elms.length; i++) {
+          elms[i].removeAttribute("disabled");
         }
-        }
-}
-</script>
-
-<p class="header"><a href="/init">Configuration and Spectrum</a> | <a href="/sync">Sync</a> | <a href="/doa">DOA Estimation</a> | <a href="/pr">Passive Radar</a></p>
+      }
+    }
+  </script>
+</head>
+<body>
+<p class="header"><a class="header_init" href="/init">Configuration and Spectrum</a> | <a class="header_sync" href="/sync">Sync</a> |
+  <a class="header_doa" href="/doa">DOA Estimation</a> | <a class="header_pr" href="/pr">Passive Radar</a>
+</p>
 <hr>
 
 <div>
-<h2>Receiver Configuration</h2>
+<h2 id="init_title">Receiver Configuration</h2>
 <form action="/init" method="post">
         <input type="hidden" name="rcv_params" value="rcv_params" />
 	<p>Center Frequency [MHz]: <input type="number" value="{{center_freq}}" step="0.0001" name="center_freq"/></p>
@@ -191,8 +195,7 @@ var elms = document.getElementsByClassName('disable')
 	<p>Filter BW [kHz]: <input type="number" value="{{filt_bw}}" step="0.001" name="filt_bw"/></p>
 	<p>FIR Tap Size: <input type="number" value="{{fir_size}}" step="1" name="fir_size"/></p>
 	<p>Decimation: <input type="number" value="{{decimation}}" step="1" name="decimation"/></p>
-
-        <p><input value="Update IQ Paramaters" type="submit" style="height:40px;"/></p>
+  <p><input value="Update IQ Paramaters" type="submit" style="height:40px;"/></p>
 </form>
 <hr>
 
@@ -228,4 +231,5 @@ var elms = document.getElementsByClassName('disable')
 </body>-->
 <iframe width=100% height=100% src="http://{{ip_addr}}:8081/init_graph.html"></iframe>
 </div>
+</body>
 </html>
