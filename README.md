@@ -1,10 +1,12 @@
 Don't use the "dev" branch, it usually has untested code.
 
-<h4>This fork adds a few GUI and Web UI convenience features:</h4>
+<h4>This fork adds a few GUI and Web UI improvements and convenience features:</h4>
 
 * Selecting “Uniform Gain” will allow you to set the same gain value for all four receivers.
 * The antenna spacing value (s, fraction of wavelength) is automatically calculated based on frequency and a user set antenna spacing (s’, meters). For circular arrays, just use the spacing between each antenna, the program will calculate the radius for you.
-* I’ve added a button to the Web UI to enable the sync display and the noise source in one click. I also increased the size of the buttons to be more mobile friendly. If the noise source or the sync display (or both) is enabled the button will disable both. This should make calibration less cumbersome on mobile devices.
+* I’ve added a button to the Web UI to enable the sync display and the noise source in one click. If the noise source or the sync display (or both) is enabled the button will disable both. This should make calibration less cumbersome on mobile devices.
+* I've added CSS to the Web UI. This will allow for easy customization of the layout and adds a mobile friendly flare. Feel free to edit ./static/style.css to your liking.
+* The graphs hurt less to look at.
 
 
 
@@ -32,7 +34,7 @@ pip3 install cairocffi
 pip3 install pyapril
 pip3 install pyargus
 pip3 install pyqtgraph
-pip3 install peakutils 
+pip3 install peakutils
 pip3 install bottle
 pip3 install paste`
 
