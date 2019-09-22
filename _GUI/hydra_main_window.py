@@ -739,7 +739,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 DOA += 360
             #DOA = 360 - DOA
             DOA_str = str(int(DOA))
-            html_str = "<DOA>"+DOA_str+"</DOA><CONF>"+str(int(confidence_sum))+"</CONF><PWR>"+str(np.maximum(0, max_power_level))+"</PWR>"
+            html_str = "<DATA>\n\t<DOA>"+DOA_str+"</DOA>\n\t<CONF>"+str(int(confidence_sum))+"</CONF>\n\t<PWR>"+str(np.maximum(0, max_power_level))+"</PWR>\n</DATA>"
             self.DOA_res_fd.seek(0)
             self.DOA_res_fd.write(html_str)
             self.DOA_res_fd.truncate()
