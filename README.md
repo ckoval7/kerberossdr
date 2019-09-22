@@ -10,7 +10,6 @@ Don't use the "dev" branch, it usually has untested code.
 * Fixed the backwards compass reading in JavaScript. This is just a bandaid. The reading should be fixed at the origin and the Android App updated to take the correct reading.
 
 
-
 <h3>Please see the software tutorial at www.rtl-sdr.com/ksdr</h3>
 
 <h2>KerberosSDR Demo Software</h2>
