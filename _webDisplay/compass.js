@@ -23,14 +23,14 @@ function parseXml(xmlStr) {
 
 
 function draw() {
-        
+
         // 1. create a new XMLHttpRequest object -- an object like any other!
         var myRequest = new XMLHttpRequest();
         // 2. open the request and pass the HTTP method name and the resource as parameters
-        myRequest.open('GET', 'DOA_value.html');     
+        myRequest.open('GET', 'DOA_value.html');
         myRequest.send();
         // 3. write a function that runs anytime the state of the AJAX request changes
-        myRequest.onreadystatechange = function () { 
+        myRequest.onreadystatechange = function () {
         // 4. check if the request has a readyState of 4, which indicates the server has responded (complete)
         if (myRequest.readyState === 4) {
             // 5. insert the text sent by the server into the HTML of the 'ajax-content'
@@ -38,16 +38,16 @@ function draw() {
             var response = myRequest.responseText; // Has the form of <DOA>..</DOA>
             response = "<DATA>" + response + "</DATA>";
             var xml = parseXml(response);
-            DOA_deg = Number(xml.getElementsByTagName("DOA")[0].childNodes[0].nodeValue);
+            DOA_deg = 360 - Number(xml.getElementsByTagName("DOA")[0].childNodes[0].nodeValue);
             PWR_val = Math.max(Number(xml.getElementsByTagName("PWR")[0].childNodes[0].nodeValue), 0);
             CONF_val = Math.max(Number(xml.getElementsByTagName("CONF")[0].childNodes[0].nodeValue), 0);
-            //DOA_deg  =  Number(response.replace( /\D+/g, ''));                                       
+            //DOA_deg  =  Number(response.replace( /\D+/g, ''));
             //Number(response.slice(5,str.lastIndexOf(response)-5));
             //var res = str.slice(5, 8);
             //console.log(response);
             //console.log(response.slice(5,str.lastIndexOf(response)-5));
             console.log(DOA_deg);
-            
+
         }
 
         if ((PWR_val >= MIN_PWR && CONF_val >= MIN_CONF) || first_entry == 1) {
@@ -62,9 +62,9 @@ function draw() {
 		// Save the current drawing state
 		ctx.save();
 
-		// Now move across and down half the 
+		// Now move across and down half the
 		ctx.translate(400, 400);  // Set to canvas size/2
-	 
+
 	        //degrees=45
 		// Rotate around this point
 		ctx.rotate(DOA_deg * (Math.PI / 180));
@@ -81,7 +81,7 @@ function draw() {
 		// Increment the angle of the needle by 5 degrees
 
 	var DOA_message = "Estimated DOA: ";
-	DOA_message = DOA_message.concat(DOA_deg," deg");        
+	DOA_message = DOA_message.concat(DOA_deg," deg");
 	document.getElementById("doa").innerHTML = DOA_message;
 
 	var PWR_message = "Signal Power: ";
