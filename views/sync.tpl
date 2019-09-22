@@ -13,7 +13,7 @@
 <h2 id="rx_sync_title">Receiver Synchronization</h2>
 <form action="/sync" method="post">
         <input type="hidden" name="enable_all_sync" value="enable_all_sync" />
-    <p><input id="set_cal_all" type="submit" value="{{!"Disable" if en_sync >= 1 and en_noise >= 1 else "Enable"}} Noise Source & Sync Display" /></p>
+    <p><input id="set_cal_all" type="submit" value="{{!"Disable" if en_sync >= 1 or en_noise >= 1 else "Enable"}} Noise Source & Sync Display" /></p>
 </form>
 
 <form action="/sync" method="post">
