@@ -89,7 +89,7 @@ class SignalProcessor(QtCore.QThread):
         self.en_DOA_estimation = False
         self.en_PR_processing = False
         self.en_PR_autodet = False
-        
+
         # DOA processing options
         self.en_DOA_Bartlett = False
         self.en_DOA_Capon = False
@@ -98,12 +98,12 @@ class SignalProcessor(QtCore.QThread):
         self.en_DOA_FB_avg = False
         self.DOA_inter_elem_space = 0.5
         self.DOA_ant_alignment = "ULA"
-        
+
         # Passive Radar processing parameters
         self.ref_ch_id = 0
         self.surv_ch_id = 1
         self.en_td_filtering = False
-        self.td_filter_dimension = 1        
+        self.td_filter_dimension = 1
         self.max_Doppler = 500  # [Hz]
         self.windowing_mode = 0
         self.max_range = 128  # [range cell]
@@ -114,23 +114,23 @@ class SignalProcessor(QtCore.QThread):
         self.RD_matrix_last = np.ones((10,10))
         self.RD_matrix_last_2 = np.ones((10,10))
         self.RD_matrix_last_3 = np.ones((10,10))
-        
+
         self.center_freq = 0  # TODO: Initialize this [Hz]
         self.fs = 1.024 * 10**6  # Decimated sampling frequncy - Update from GUI
         #self.sample_size = 2**15
         self.channel_number = 4
-        
-        # Processing parameters        
+
+        # Processing parameters
         self.test = None
         self.spectrum_sample_size = 2**14 #2**14
         self.DOA_sample_size = 2**15 # Connect to GUI value??
         self.xcorr_sample_size = 2**18 #2**18
         self.spectrum = np.ones((self.channel_number+1,self.spectrum_sample_size), dtype=np.float32)
-        self.xcorr = np.ones((self.channel_number-1,self.xcorr_sample_size*2), dtype=np.complex64)        
+        self.xcorr = np.ones((self.channel_number-1,self.xcorr_sample_size*2), dtype=np.complex64)
         self.phasor_win = 2**10 # Phasor plot window
         self.phasors = np.ones((self.channel_number-1, self.phasor_win), dtype=np.complex64)
         self.run_processing = False
-        
+
         # Result vectors
         self.delay_log= np.array([[0],[0],[0]])
         self.phase_log= np.array([[0],[0],[0]])
@@ -139,7 +139,7 @@ class SignalProcessor(QtCore.QThread):
         self.DOA_MEM_res = np.ones(181)
         self.DOA_MUSIC_res = np.ones(181)
         self.DOA_theta = np.arange(0,181,1)
-        
+
         # Auto resync params
         self.lastTime = 0
         self.runningSync = 0
@@ -149,10 +149,10 @@ class SignalProcessor(QtCore.QThread):
 
     def run(self):
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        #    
+        #
         # xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         self.run_processing = True
-        
+
         while self.run_processing:
             start_time = time.time()
 
@@ -164,14 +164,14 @@ class SignalProcessor(QtCore.QThread):
 
             self.DOA_sample_size = self.module_receiver.iq_samples[0,:].size
             self.xcorr_sample_size = self.module_receiver.iq_samples[0,:].size
-            self.xcorr = np.ones((self.channel_number-1,self.xcorr_sample_size*2), dtype=np.complex64) 
-            
+            self.xcorr = np.ones((self.channel_number-1,self.xcorr_sample_size*2), dtype=np.complex64)
+
             # Check overdrive
             if self.module_receiver.overdrive_detect_flag:
                 self.signal_overdrive.emit(1)
             else:
                 self.signal_overdrive.emit(0)
-            
+
             # Display spectrum
             if self.en_spectrum:
                 self.spectrum[0, :] = np.fft.fftshift(np.fft.fftfreq(self.spectrum_sample_size, 1/self.fs))/10**6
@@ -182,18 +182,18 @@ class SignalProcessor(QtCore.QThread):
                 for m in range(self.channel_number):
                     self.spectrum[m+1,:] = 10*np.log10(np.fft.fftshift(np.abs(np.fft.fft(self.module_receiver.iq_samples[m, 0:self.spectrum_sample_size]))))
                 self.signal_spectrum_ready.emit()
-            
+
             # Synchronization
             if self.en_sync or self.timed_sync:
                 #print("Sync graph enabled")
                 self.sample_delay()
                 self.signal_sync_ready.emit()
-            
+
             # Sample offset compensation request
             if self.en_sample_offset_sync:
                 self.module_receiver.set_sample_offsets(self.delay_log[:,-1])
-                self.en_sample_offset_sync = False    
-            
+                self.en_sample_offset_sync = False
+
             # IQ calibration request
             if self.en_calib_iq:
                 # IQ correction
@@ -203,20 +203,20 @@ class SignalProcessor(QtCore.QThread):
                 self.module_receiver.iq_corrections = np.divide(self.module_receiver.iq_corrections, c)
                 #print("Corrections: ",self.module_receiver.iq_corrections)
                 self.en_calib_iq = False
-            
+
             if self.en_calib_DOA_90:
                 #TODO: Experimental only for UCA, implement this properly!
-                # This calibration is currently done for 0 deg not 90 
+                # This calibration is currently done for 0 deg not 90
                 x = self.DOA_inter_elem_space * np.cos(2*np.pi/4 * np.arange(4))
                 y = self.DOA_inter_elem_space * np.sin(-2*np.pi/4 * np.arange(4)) # For this specific array only
-                ref_vector = de.gen_scanning_vectors(4, x, y, np.zeros(1))[:, 0]                
-                #ref_vector = np.exp(1j*2*np.pi*0.5*np.cos(np.radians(0-np.arange(self.channel_number)*(360)/self.channel_number))) # UCA                
+                ref_vector = de.gen_scanning_vectors(4, x, y, np.zeros(1))[:, 0]
+                #ref_vector = np.exp(1j*2*np.pi*0.5*np.cos(np.radians(0-np.arange(self.channel_number)*(360)/self.channel_number))) # UCA
                 N= np.size(self.module_receiver.iq_samples[0, :])
                 for m in range(self.channel_number):
-                    self.module_receiver.iq_corrections[m] *= ref_vector[m]*N/(np.dot(self.module_receiver.iq_samples[m, :],self.module_receiver.iq_samples[0, :].conj()))                
+                    self.module_receiver.iq_corrections[m] *= ref_vector[m]*N/(np.dot(self.module_receiver.iq_samples[m, :],self.module_receiver.iq_samples[0, :].conj()))
                 #print("Corrections: ",self.module_receiver.iq_corrections)
                 self.en_calib_DOA_90 = False
-                
+
             # Direction of Arrival estimation
             if self.en_DOA_estimation:
                 # Get FFT for squelch
@@ -224,7 +224,7 @@ class SignalProcessor(QtCore.QThread):
 
                 self.estimate_DOA()
                 self.signal_DOA_ready.emit()
-            
+
             # Passive Radar processing
             if self.en_PR_processing:
 #                self.module_receiver.channel_number = 2
@@ -232,7 +232,7 @@ class SignalProcessor(QtCore.QThread):
                 self.signal_PR_ready.emit()
 #            else:
 #                self.module_receiver.channel_number = 4
-            
+
 
             # Record IQ samples
             if self.en_record:
@@ -266,7 +266,7 @@ class SignalProcessor(QtCore.QThread):
         #print("Entered sample delay func")
         N = self.xcorr_sample_size
         iq_samples = self.module_receiver.iq_samples[:, 0:N]
-       
+
         delays = np.array([[0],[0],[0]])
         phases = np.array([[0],[0],[0]])
         # Channel matching
@@ -280,11 +280,11 @@ class SignalProcessor(QtCore.QThread):
             delay = np.argmax(np.abs(self.xcorr[m-1])) - N
             #phase = np.rad2deg(np.angle(self.xcorr[m-1, delay + N]))
             phase = np.rad2deg(np.angle(self.xcorr[m-1, N]))
-            
-            #offset = 50000                     
+
+            #offset = 50000
             #self.phasors[m-1, :] = (iq_samples[0, offset: self.phasor_win+offset] * iq_samples[m, offset+delay: self.phasor_win+offset+delay].conj())
             #self.phasors[m-1, :] = (iq_samples[0, 0: self.phasor_win] * iq_samples[m, 0: self.phasor_win].conj())
-            
+
             """
             self.IQSamples[1, :] = np.roll(self.IQSamples[1, :], delay * -1)
             if delay > 0:
@@ -299,11 +299,11 @@ class SignalProcessor(QtCore.QThread):
 
         self.delay_log = np.concatenate((self.delay_log, delays),axis=1)
         self.phase_log = np.concatenate((self.phase_log, phases),axis=1)
-    
+
     def delete_sync_history(self):
         self.delay_log= np.array([[0],[0],[0]])
         self.phase_log= np.array([[0],[0],[0]])
-    
+
 
     def estimate_DOA(self):
         #print("[ INFO ] Python DSP: Estimating DOA")
@@ -337,7 +337,7 @@ class SignalProcessor(QtCore.QThread):
         elif self.DOA_ant_alignment == "ULA":
             self.DOA_theta =  np.linspace(-90,90,181)
             x = np.zeros(M)
-            y = np.arange(M) * self.DOA_inter_elem_space            
+            y = np.arange(M) * self.DOA_inter_elem_space
             scanning_vectors = de.gen_scanning_vectors(M, x, y, self.DOA_theta)
 
             # DOA estimation
@@ -350,7 +350,7 @@ class SignalProcessor(QtCore.QThread):
             if self.en_DOA_MUSIC:
                 self.DOA_MUSIC_res = de.DOA_MUSIC(R, scanning_vectors, signal_dimension = 1)
 
-        print(self.DOA_MUSIC_res)
+        #print(self.DOA_MUSIC_res)
 
 
     def PR_processing(self):
@@ -371,11 +371,11 @@ class SignalProcessor(QtCore.QThread):
            #surv_ch = det.windowing(surv_ch, "Rectangular")
         else:
            surv_ch = det.windowing(surv_ch, "Hamming")
-           
+
         self.RD_matrix = det.cc_detector_ons(ref_ch, surv_ch, self.fs, self.max_Doppler, self.max_range, verbose=0, Qt_obj=None)
-        
+
         if self.en_PR_autodet:
-            self.hit_matrix = CA_CFAR(self.RD_matrix,self.cfar_win_params, self.cfar_threshold)            
+            self.hit_matrix = CA_CFAR(self.RD_matrix,self.cfar_win_params, self.cfar_threshold)
         #print("[ DONE ] Range-Doppler processing finished")
     def stop(self):
         self.run_processing = False

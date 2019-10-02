@@ -29,6 +29,7 @@ import scipy
 from bottle import route, run, request, get, post, redirect, template, static_file
 import threading
 import subprocess
+import xml.etree.ElementTree as ET
 
 np.seterr(divide='ignore')
 
@@ -156,7 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.plotWidget_DOA.showGrid(x=True, alpha=0.25)
         self.gridLayout_DOA.addWidget(self.win_DOA, 1, 1, 1, 1)
 
-        self.DOA_res_fd = open("/ram/DOA_value.html","w") # DOA estimation result file descriptor
+        self.DOA_res_fd = open("/ram/DOA_value.html","wb") # DOA estimation result file descriptor
 
         # Junk data to just init plot legends
         x = np.arange(1000)
@@ -284,24 +285,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
 
 
-
-        #self.spectrum_plot()
-        #self.delay_plot()
-        #self.DOA_plot()
-        #self.RD_plot()
-
-
         # Set default confiuration for the GUI components
         self.set_default_configuration()
 
         self.ip_addr = sys.argv[2]
         threading.Thread(target=run, kwargs=dict(host=self.ip_addr, port=8080, quiet=True, debug=False, server='paste')).start()
-
-    #-----------------------------------------------------------------
-    #
-    #-----------------------------------------------------------------
-
-
 
 
     def set_default_configuration(self):
@@ -345,7 +333,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_signal_processor.en_spectrum = True
         else:
             self.module_signal_processor.en_spectrum = False
-
 
     def pb_rec_reconfig_clicked(self):
         center_freq = self.doubleSpinBox_center_freq.value() *10**6
@@ -638,7 +625,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.sync_time = currentTime
             self.export_sync.export('/ram/sync.jpg')
 
-
     def DOA_plot_helper(self, DOA_data, incident_angles, log_scale_min=None, color=(255, 199, 15), legend=None):
 
         DOA_data = np.divide(np.abs(DOA_data), np.max(np.abs(DOA_data))) # normalization
@@ -652,7 +638,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         plot = self.plotWidget_DOA.plot(incident_angles, DOA_data, pen=pg.mkPen(color, width=2))
         return DOA_data
-
 
     def DOA_plot(self):
 
@@ -739,10 +724,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 DOA += 360
             #DOA = 360 - DOA
             DOA_str = str(int(DOA))
-            html_str = "<DATA>\n<DOA>"+DOA_str+"</DOA>\n<CONF>"+str(int(confidence_sum))+"</CONF>\n<PWR>"+str(np.maximum(0, max_power_level))+"</PWR>\n</DATA>"
-            self.DOA_res_fd.seek(0)
-            self.DOA_res_fd.write(html_str)
-            self.DOA_res_fd.truncate()
+            #print(DOA_str, str(int(confidence_sum)), str(np.maximum(0, max_power_level)))
+            self.wr_xml(str(int(DOA)), str(int(confidence_sum)), str(np.maximum(0, max_power_level)))
+            # html_str = "<DATA>\n<DOA>"+DOA_str+"</DOA>\n<CONF>"+str(int(confidence_sum))+"</CONF>\n<PWR>"+str(np.maximum(0, max_power_level))+"</PWR>\n</DATA>"
+            # self.DOA_res_fd.seek(0)
+            # self.DOA_res_fd.write(html_str)
+            # self.DOA_res_fd.truncate()
             #print("[ INFO ] Python GUI: DOA results writen:",html_str)
 
         #self.DOA_res_fd.close()
@@ -752,7 +739,40 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.DOA_time = currentTime
             self.export_DOA.export('/ram/doa.jpg')
 
+    def wr_xml(self, doa, conf, pwr):
+        station_id = "placeholder" #sys.argv[3]
+        epoch_time = 1000 * round(time.time(), 3)
+        # create the file structure
+        data = ET.Element('DATA')
+        xml_st_id = ET.SubElement(data, 'STATION_ID')
+        xml_time = ET.SubElement(data, 'TIME')
+        xml_freq = ET.SubElement(data, 'FREQUENCY')
+        xml_location = ET.SubElement(data, 'LOCATION')
+        xml_latitide = ET.SubElement(xml_location, 'LATITUDE')
+        xml_longitude = ET.SubElement(xml_location, 'LONGITUDE')
+        xml_heading = ET.SubElement(xml_location, 'HEADING')
+        xml_abs_doa = ET.SubElement(data, 'ABS_DOA')
+        xml_doa = ET.SubElement(data, 'DOA')
+        xml_pwr = ET.SubElement(data, 'PWR')
+        xml_conf = ET.SubElement(data, 'CONF')
 
+
+        xml_st_id.text = str(station_id)
+        xml_time.text = str(epoch_time)
+        xml_freq.text = str(self.doubleSpinBox_center_freq.value())
+        xml_latitide.text = str(0)
+        xml_longitude.text = str(0)
+        xml_heading.text = str(0)
+        xml_abs_doa.text = doa
+        xml_doa.text = doa
+        xml_pwr.text = pwr
+        xml_conf.text = conf
+
+        # create a new XML file with the results
+        html_str = ET.tostring(data)
+        self.DOA_res_fd.seek(0)
+        self.DOA_res_fd.write(html_str)
+        self.DOA_res_fd.truncate()
 
     def RD_plot(self):
         """
@@ -827,10 +847,6 @@ def reboot_program():
     form.module_receiver.close()
     form.DOA_res_fd.close()
     subprocess.call(['./run.sh'])
-
-#@route('/static/:path#.+#', name='static')
-#def static(path):
-    #return static_file(path, root='static')
 
 @route('/static/<filepath:path>', name='static')
 def server_static(filepath):
