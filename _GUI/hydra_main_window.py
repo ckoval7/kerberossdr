@@ -157,7 +157,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.plotWidget_DOA.showGrid(x=True, alpha=0.25)
         self.gridLayout_DOA.addWidget(self.win_DOA, 1, 1, 1, 1)
 
-        self.DOA_res_fd = open("/ram/DOA_value.html","wb") # DOA estimation result file descriptor
+        self.DOA_res_fd = open("/ram/DOA_value.html","w") # DOA estimation result file descriptor
 
         # Junk data to just init plot legends
         x = np.arange(1000)
@@ -719,7 +719,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             DOA = np.rad2deg(np.angle(DOA_avg_c))
 
             # Update DOA results on the compass display
-            #print("[ INFO ] Python GUI: DOA results :",DOA_results)
+            #print("[ INFO ] Python GUI: DOA results :",DOA_results).
+
+            #Keeping DOA results reversed for App compatiblity
             if DOA < 0:
                 DOA += 360
             #DOA = 360 - DOA
@@ -740,8 +742,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.export_DOA.export('/ram/doa.jpg')
 
     def wr_xml(self, doa, conf, pwr):
-        station_id = "placeholder" #sys.argv[3]
-        epoch_time = 1000 * round(time.time(), 3)
+        station_id = sys.argv[3]
+        latitude = sys.argv[4]
+        longitude = sys.argv[5]
+        epoch_time = int(1000 * round(time.time(), 3))
         # create the file structure
         data = ET.Element('DATA')
         xml_st_id = ET.SubElement(data, 'STATION_ID')
@@ -751,25 +755,26 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         xml_latitide = ET.SubElement(xml_location, 'LATITUDE')
         xml_longitude = ET.SubElement(xml_location, 'LONGITUDE')
         xml_heading = ET.SubElement(xml_location, 'HEADING')
-        xml_abs_doa = ET.SubElement(data, 'ABS_DOA')
+        #xml_abs_doa = ET.SubElement(data, 'ABS_DOA')
         xml_doa = ET.SubElement(data, 'DOA')
         xml_pwr = ET.SubElement(data, 'PWR')
         xml_conf = ET.SubElement(data, 'CONF')
 
+        #abs_doa math here
 
         xml_st_id.text = str(station_id)
         xml_time.text = str(epoch_time)
         xml_freq.text = str(self.doubleSpinBox_center_freq.value())
-        xml_latitide.text = str(0)
-        xml_longitude.text = str(0)
+        xml_latitide.text = str(latitude)
+        xml_longitude.text = str(longitude)
         xml_heading.text = str(0)
-        xml_abs_doa.text = doa
+        #xml_abs_doa.text = doa
         xml_doa.text = doa
         xml_pwr.text = pwr
         xml_conf.text = conf
 
         # create a new XML file with the results
-        html_str = ET.tostring(data)
+        html_str = ET.tostring(data, encoding="unicode")
         self.DOA_res_fd.seek(0)
         self.DOA_res_fd.write(html_str)
         self.DOA_res_fd.truncate()
