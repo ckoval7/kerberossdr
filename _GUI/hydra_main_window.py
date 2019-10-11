@@ -30,6 +30,15 @@ from bottle import route, run, request, get, post, redirect, template, static_fi
 import threading
 import subprocess
 import xml.etree.ElementTree as ET
+import RPi.GPIO as GPIO
+
+GPIO.setwarnings(False)
+GPIO.setmode(GPIO.BOARD)
+ant_control_pins = (16,18)
+GPIO.setup(ant_control_pins, GPIO.OUT)
+
+#Ant 1 Enabled
+GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
 
 np.seterr(divide='ignore')
 
@@ -326,8 +335,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def set_sync_params(self):
         if self.checkBox_en_sync_display.checkState():
             self.module_signal_processor.en_sync = True
+            #Ant 1 Disabled
+            GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
         else:
             self.module_signal_processor.en_sync = False
+            #Ant 1 Enabled
+            GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
     def set_spectrum_params(self):
         if self.checkBox_en_spectrum.checkState():
             self.module_signal_processor.en_spectrum = True
