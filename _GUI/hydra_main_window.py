@@ -755,12 +755,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         xml_latitide = ET.SubElement(xml_location, 'LATITUDE')
         xml_longitude = ET.SubElement(xml_location, 'LONGITUDE')
         xml_heading = ET.SubElement(xml_location, 'HEADING')
-        #xml_abs_doa = ET.SubElement(data, 'ABS_DOA')
         xml_doa = ET.SubElement(data, 'DOA')
         xml_pwr = ET.SubElement(data, 'PWR')
         xml_conf = ET.SubElement(data, 'CONF')
-
-        #abs_doa math here
 
         xml_st_id.text = str(station_id)
         xml_time.text = str(epoch_time)
@@ -768,7 +765,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         xml_latitide.text = str(latitude)
         xml_longitude.text = str(longitude)
         xml_heading.text = str(0)
-        #xml_abs_doa.text = doa
         xml_doa.text = doa
         xml_pwr.text = pwr
         xml_conf.text = conf
