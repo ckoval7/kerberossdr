@@ -3,8 +3,16 @@
 BUFF_SIZE=256 #Must be a power of 2. Normal values are 128, 256. 512 is possible on a fast PC.
 #IPADDR="0.0.0.0"
 #IPADDR="10.0.0.134"
-IPADDR="172.16.0.79"
+#IPADDR="172.16.0.79"
 #IPADDR="192.168.4.1"
+IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+while [ "$IPADDR" == "" ]
+do
+sleep 1
+echo "waiting for network"
+IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
+echo $IPADDR
+done
 STATION_ID="K3CPK-1"
 LAT="39.124725"
 LON="-76.519717"
