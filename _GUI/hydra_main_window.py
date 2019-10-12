@@ -429,6 +429,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.set_iq_preprocessing_params()
             #Ant 1 Enabled
             GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+            print("Auto-Cal Success")
         except NameError as e:
             print(e)
             print("Cannot AutoCal, GPIO not available")
