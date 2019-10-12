@@ -1115,6 +1115,7 @@ def init():
     return template ('init.tpl', {'center_freq':center_freq,
 				'samp_index':samp_index,
                 'uniform_gain':uniform_gain,
+                'autocal' :autocal,
 				'gain_index':gain_index,
 				'gain_index_2':gain_index_2,
 				'gain_index_3':gain_index_3,

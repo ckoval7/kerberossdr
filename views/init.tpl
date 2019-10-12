@@ -181,7 +181,7 @@
 		<option value="28" {{!'selected="selected"' if gain_index_4 == 28 else ""}}>49.6</option>
 	</select></p>
 
-  <input id="autocal" type="checkbox" name="autocal" value="on" {{!'checked="checked"' if autocal >= 1 else ""}}> Uniform Gain<br>
+  <input id="autocal" type="checkbox" name="autocal" value="on" {{!'checked="checked"' if autocal >= 1 else ""}}> Auto calibration<br>
 
 	<p><input value="Update Receiver Paramaters" type="submit" style="height:40px;"/></p>
 
