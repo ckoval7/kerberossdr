@@ -408,43 +408,45 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_receiver.switch_noise_source(0)
 
     def sync_ready(self):
-        if self.checkBox_en_sync_display.isChecked(): delay_plot()
+        if self.checkBox_en_sync_display.isChecked(): self.delay_plot()
 
     def auto_cal(self):
-        try:
-            #Pre-cal setup:
-            self.set_default_configuration()
-            ##Ant 1 Disabled
-            GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
-            ##DC Comp Off
-            self.module_receiver.en_dc_compensation = False
-            ##Tap size  to 0
-            tap_size = 0
-            bw = self.doubleSpinBox_filterbw.value() * 10**3  # ->[kHz]
-            self.module_receiver.set_fir_coeffs(tap_size, bw)
-            ##decimation to 1
-            self.module_receiver.decimation_ratio = 1
-            self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
-            #Run Cal
-            sleep_timer = 1
-            self.module_signal_processor.en_sync = True
-            self.module_receiver.switch_noise_source(1)
-            time.sleep(sleep_timer)
-            self.module_signal_processor.en_sample_offset_sync=True
-            time.sleep(sleep_timer)
-            self.module_signal_processor.en_calib_iq=True
-            time.sleep(sleep_timer)
-            #Post-cal teardown:
-            self.module_signal_processor.en_sync = False
-            ##Restore User Settings
-            self.module_receiver.switch_noise_source(0)
-            self.set_iq_preprocessing_params()
-            ##Ant 1 Enabled
-            GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
-            print("Auto-Cal Success")
-        except NameError as e:
-            print(e)
-            print("Cannot AutoCal, GPIO not available")
+        if self.pushButton_proc_control.text() == "Stop processing":
+            try:
+                #Pre-cal setup:
+                self.set_default_configuration()
+                ##Ant 1 Disabled
+                GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
+                ##DC Comp Off
+                self.module_receiver.en_dc_compensation = False
+                ##Tap size  to 0
+                tap_size = 0
+                bw = self.doubleSpinBox_filterbw.value() * 10**3  # ->[kHz]
+                self.module_receiver.set_fir_coeffs(tap_size, bw)
+                ##decimation to 1
+                self.module_receiver.decimation_ratio = 1
+                self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
+                #Run Cal
+                sleep_timer = 5
+                self.module_signal_processor.en_sync = True
+                #time.sleep(sleep_timer)
+                self.module_receiver.switch_noise_source(1)
+                time.sleep(sleep_timer)
+                self.module_signal_processor.en_sample_offset_sync=True
+                time.sleep(sleep_timer)
+                self.module_signal_processor.en_calib_iq=True
+                time.sleep(sleep_timer)
+                #Post-cal teardown:
+                self.module_signal_processor.en_sync = False
+                ##Restore User Settings
+                self.module_receiver.switch_noise_source(0)
+                self.set_iq_preprocessing_params()
+                ##Ant 1 Enabled
+                GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+                print("Auto-Cal Success")
+            except NameError as e:
+                print(e)
+                print("Cannot AutoCal, GPIO not available")
 
     def set_iq_preprocessing_params(self):
         """

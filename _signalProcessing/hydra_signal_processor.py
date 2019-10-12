@@ -191,6 +191,7 @@ class SignalProcessor(QtCore.QThread):
 
             # Sample offset compensation request
             if self.en_sample_offset_sync:
+                print("Sig Process Calling Receiver, set sample offsets")
                 self.module_receiver.set_sample_offsets(self.delay_log[:,-1])
                 self.en_sample_offset_sync = False
 
@@ -263,7 +264,7 @@ class SignalProcessor(QtCore.QThread):
 
 
     def sample_delay(self):
-        #print("Entered sample delay func")
+        print("Entered sample delay func")
         N = self.xcorr_sample_size
         iq_samples = self.module_receiver.iq_samples[:, 0:N]
 
@@ -292,8 +293,8 @@ class SignalProcessor(QtCore.QThread):
             if delay < 0:
                 self.IQSamples[1, 0: np.abs(delay)] = np.zeros(np.abs(delay), dtype=np.complex64)
             """
-            #msg = "[ INFO ] delay: " + str(delay)
-            #print(msg)
+            msg = "[ INFO ] delay: " + str(delay)
+            print(msg)
             delays[m-1,0] = delay
             phases[m-1,0] = phase
 
