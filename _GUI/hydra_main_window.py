@@ -282,7 +282,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.module_signal_processor.signal_overdrive.connect(self.power_level_update)
         self.module_signal_processor.signal_period.connect(self.period_time_update)
         self.module_signal_processor.signal_spectrum_ready.connect(self.spectrum_plot)
-        self.module_signal_processor.signal_sync_ready.connect(self.delay_plot)
+        self.module_signal_processor.signal_sync_ready.connect(self.sync_ready)#delay_plot)
         self.module_signal_processor.signal_DOA_ready.connect(self.DOA_plot)
         self.module_signal_processor.signal_PR_ready.connect(self.RD_plot)
         # -> Set default confiration for the signal processing module
@@ -407,6 +407,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_signal_processor.noise_checked = False
             self.module_receiver.switch_noise_source(0)
 
+    def sync_ready(self):
+        if self.checkBox_en_sync_display.isChecked(): delay_plot()
+
     def auto_cal(self):
         try:
             #Pre-cal setup:
@@ -424,7 +427,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
             #Run Cal
             sleep_timer = 1
-            #self.module_signal_processor.en_sync = True
+            self.module_signal_processor.en_sync = True
             self.module_receiver.switch_noise_source(1)
             time.sleep(sleep_timer)
             self.module_signal_processor.en_sample_offset_sync=True
@@ -432,7 +435,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_signal_processor.en_calib_iq=True
             time.sleep(sleep_timer)
             #Post-cal teardown:
-            #self.module_signal_processor.en_sync = False
+            self.module_signal_processor.en_sync = False
             ##Restore User Settings
             self.module_receiver.switch_noise_source(0)
             self.set_iq_preprocessing_params()
