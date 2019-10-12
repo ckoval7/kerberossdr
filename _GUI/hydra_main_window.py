@@ -232,7 +232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Connect checkbox signals
         self.checkBox_en_uniform_gain.stateChanged.connect(self.pb_rec_reconfig_clicked)
-        self.checkBox_en_autocal.stateChanged.connect(self.pb_rec_reconfig_clicked)
+        #self.checkBox_en_autocal.stateChanged.connect(self.pb_rec_reconfig_clicked)
         self.checkBox_en_sync_display.stateChanged.connect(self.set_sync_params)
         self.checkBox_en_spectrum.stateChanged.connect(self.set_spectrum_params)
         self.checkBox_en_DOA.stateChanged.connect(self.set_DOA_params)
@@ -423,16 +423,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_receiver.decimation_ratio = 1
             self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
             #Run Cal
-            sleep_timer = 2
-            self.module_signal_processor.en_sync = True
-            time.sleep(sleep_timer)
+            #sleep_timer = 2
+            #self.module_signal_processor.en_sync = True
+            #time.sleep(sleep_timer)
+            self.module_receiver.switch_noise_source(1)
             self.module_signal_processor.en_sample_offset_sync=True
-            time.sleep(sleep_timer)
+            #time.sleep(sleep_timer)
             self.module_signal_processor.en_calib_iq=True
-            time.sleep(sleep_timer)
+            #time.sleep(sleep_timer)
             #Post-cal teardown:
-            self.module_signal_processor.en_sync = False
+            #self.module_signal_processor.en_sync = False
             ##Restore User Settings
+            self.module_receiver.switch_noise_source(0)
             self.set_iq_preprocessing_params()
             ##Ant 1 Enabled
             GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
