@@ -30,6 +30,7 @@ from bottle import route, run, request, get, post, redirect, template, static_fi
 import threading
 import subprocess
 import xml.etree.ElementTree as ET
+gpio_error = None
 try:
     import RPi.GPIO as GPIO
     GPIO.setwarnings(False)
@@ -39,7 +40,8 @@ try:
 
     #Ant 1 Enabled
     GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
-except:
+except ModuleNotFoundError as e:
+    gpio_error = e
     print("Cannot import GPIO. Maybe not on a pi?")
 
 
@@ -396,8 +398,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.module_signal_processor.center_freq=self.doubleSpinBox_center_freq.value() *10**6
         self.module_receiver.reconfigure_tuner(center_freq, sample_rate, gain)
-        if self.checkBox_en_autocal.checkState():
+        global gpio_error
+        if self.checkBox_en_autocal.checkState() and gpio_error == None:
+            self.label_autocal_status.setText("Ready")
             self.auto_cal()
+        elif gpio_error != None:
+            red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
+            red_text += "No GPIO"
+            red_text += ("</span>")
+            self.label_autocal_status.setText(red_text)
+            print("Cannot AutoCal, GPIO not available")
+        else:
+            self.label_autocal_status.setText("Off")
 
     def switch_noise_source(self):
         if self.checkBox_en_noise_source.checkState():
@@ -414,6 +426,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.pushButton_proc_control.text() == "Stop processing":
             try:
                 #Pre-cal setup:
+                self.label_autocal_status.setText("Setup")
                 self.set_default_configuration()
                 ##Ant 1 Disabled
                 GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
@@ -429,24 +442,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 #Run Cal
                 sleep_timer = 3
                 self.module_receiver.switch_noise_source(1)
+                self.label_autocal_status.setText("Enabling Sync")
                 self.module_signal_processor.en_sync = True
-                #time.sleep(sleep_timer)
-                print("Sleeping for ", self.update_delay)
-                time.sleep(self.update_delay)
+                time.sleep(sleep_timer)
+                self.label_autocal_status.setText("Sample Offset")
                 self.module_signal_processor.en_sample_offset_sync=True
                 time.sleep(sleep_timer)
+                self.label_autocal_status.setText("Cal IQ")
                 self.module_signal_processor.en_calib_iq=True
                 time.sleep(sleep_timer)
                 #Post-cal teardown:
+                self.label_autocal_status.setText("Cleanup")
                 self.module_signal_processor.en_sync = False
                 ##Restore User Settings
                 self.module_receiver.switch_noise_source(0)
                 self.set_iq_preprocessing_params()
                 ##Ant 1 Enabled
                 GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+                self.label_autocal_status.setText("Success")
                 print("Auto-Cal Success")
             except NameError as e:
-                print(e)
+                red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
+                red_text += "No GPIO"
+                red_text += ("</span>")
+                self.label_autocal_status.setText(red_text)
                 print("Cannot AutoCal, GPIO not available")
 
     def set_iq_preprocessing_params(self):
@@ -1214,6 +1233,7 @@ def do_init():
 def stats():
 
     upd_rate = form.label_update_rate.text()
+    autocal_status = form.label_autocal_status.text()
 
     if(form.module_receiver.overdrive_detect_flag):
        ovr_drv = "YES"
@@ -1221,6 +1241,6 @@ def stats():
        ovr_drv = "NO"
 
     return template ('stats.tpl', {'upd_rate':upd_rate,
-				'ovr_drv':ovr_drv})
+				'ovr_drv':ovr_drv, 'autocal_status':autocal_status})
 
 app.exec_()
