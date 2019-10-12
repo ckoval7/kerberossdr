@@ -427,11 +427,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.module_receiver.decimation_ratio = 1
                 self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
                 #Run Cal
-                sleep_timer = 5
+                sleep_timer = 3
+                self.module_receiver.switch_noise_source(1)
                 self.module_signal_processor.en_sync = True
                 #time.sleep(sleep_timer)
-                self.module_receiver.switch_noise_source(1)
-                time.sleep(sleep_timer)
+                print("Sleeping for ", self.update_delay)
+                time.sleep(self.update_delay)
                 self.module_signal_processor.en_sample_offset_sync=True
                 time.sleep(sleep_timer)
                 self.module_signal_processor.en_calib_iq=True
@@ -608,6 +609,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             green_text += ("</span>")
             self.label_power_level.setText(green_text)
     def period_time_update(self, update_period):
+        self.update_delay = update_period
         if update_period > 1:
             self.label_update_rate.setText("%.1f s" %update_period)
         else:
