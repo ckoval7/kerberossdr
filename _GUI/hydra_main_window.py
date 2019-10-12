@@ -232,6 +232,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Connect checkbox signals
         self.checkBox_en_uniform_gain.stateChanged.connect(self.pb_rec_reconfig_clicked)
+        self.checkBox_en_autocal.stateChanged.connect(self.pb_rec_reconfig_clicked)
         self.checkBox_en_sync_display.stateChanged.connect(self.set_sync_params)
         self.checkBox_en_spectrum.stateChanged.connect(self.set_spectrum_params)
         self.checkBox_en_DOA.stateChanged.connect(self.set_DOA_params)
@@ -395,7 +396,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.module_signal_processor.center_freq=self.doubleSpinBox_center_freq.value() *10**6
         self.module_receiver.reconfigure_tuner(center_freq, sample_rate, gain)
-        self.auto_cal()
+        if self.checkBox_en_autocal.checkState():
+            self.auto_cal()
 
     def switch_noise_source(self):
         if self.checkBox_en_noise_source.checkState():
@@ -409,15 +411,15 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         try:
             #Pre-cal setup:
             self.set_default_configuration()
-            #Ant 1 Disabled
+            ##Ant 1 Disabled
             GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
-            #DC Comp Off
+            ##DC Comp Off
             self.module_receiver.en_dc_compensation = False
-            #Tap size  to 0
+            ##Tap size  to 0
             tap_size = 0
             bw = self.doubleSpinBox_filterbw.value() * 10**3  # ->[kHz]
             self.module_receiver.set_fir_coeffs(tap_size, bw)
-            #decimation to 1
+            ##decimation to 1
             self.module_receiver.decimation_ratio = 1
             self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
             #Run Cal
@@ -426,8 +428,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_signal_processor.en_calib_iq=True
             #Post-cal teardown:
             self.module_signal_processor.en_sync = False
+            ##Restore User Settings
             self.set_iq_preprocessing_params()
-            #Ant 1 Enabled
+            ##Ant 1 Enabled
             GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
             print("Auto-Cal Success")
         except NameError as e:
@@ -1102,6 +1105,7 @@ def init():
     gain_index_2 = int(form.comboBox_gain_2.currentIndex())
     gain_index_3 = int(form.comboBox_gain_3.currentIndex())
     gain_index_4 = int(form.comboBox_gain_4.currentIndex())
+    autocal = form.checkBox_en_autocal.checkState()
     dc_comp = form.checkBox_en_dc_compensation.checkState()
     filt_bw = form.doubleSpinBox_filterbw.value()
     fir_size = form.spinBox_fir_tap_size.value()
@@ -1132,6 +1136,9 @@ def do_init():
 
         uniform_gain = request.forms.get('uniform_gain')
         form.checkBox_en_uniform_gain.setChecked(True if uniform_gain=="on" else False)
+
+        autocal = request.forms.get('autocal')
+        form.checkBox_en_autocal.setChecked(True if autocal=="on" else False)
 
         if uniform_gain == "on":
             gain_index = request.forms.get('gain')

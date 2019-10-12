@@ -262,9 +262,9 @@ class Ui_MainWindow(object):
         self.comboBox_gain_4.addItem(_fromUtf8(""))
         self.gridLayout_16.addWidget(self.comboBox_gain_4, 6, 1, 1, 1)
 
-
-
-
+        self.checkBox_en_autocal = QtGui.QCheckBox(self.groupBox_7)
+        self.checkBox_en_autocal.setObjectName(_fromUtf8("checkBox_en_autocal"))
+        self.gridLayout_16.addWidget(self.checkBox_en_autocal, 7, 0, 1, 1)
 
         self.gridLayout_17.addLayout(self.gridLayout_16, 0, 0, 1, 1)
         self.pushButton_set_receiver_config = QtGui.QPushButton(self.groupBox_7)
@@ -741,6 +741,7 @@ class Ui_MainWindow(object):
         self.comboBox_sampling_freq.setCurrentIndex(2)
 
         self.checkBox_en_uniform_gain.setText(_translate("MainWindow", "Uniform Gain", None))
+        self.checkBox_en_autocal.setText(_translate("MainWindow", "Auto Calibration", None))
 
 
         self.label_3.setText(_translate("KerberosSDR", "Center frequency [MHz]:", None))
