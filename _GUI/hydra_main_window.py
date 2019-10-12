@@ -423,12 +423,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.module_receiver.decimation_ratio = 1
             self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
             #Run Cal
+            sleep_timer = 2
             self.module_signal_processor.en_sync = True
-            time.sleep(1)
+            time.sleep(sleep_timer)
             self.module_signal_processor.en_sample_offset_sync=True
-            time.sleep(1)
+            time.sleep(sleep_timer)
             self.module_signal_processor.en_calib_iq=True
-            time.sleep(1)
+            time.sleep(sleep_timer)
             #Post-cal teardown:
             self.module_signal_processor.en_sync = False
             ##Restore User Settings
