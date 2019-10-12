@@ -30,15 +30,19 @@ from bottle import route, run, request, get, post, redirect, template, static_fi
 import threading
 import subprocess
 import xml.etree.ElementTree as ET
-import RPi.GPIO as GPIO
+try:
+    import RPi.GPIO as GPIO
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BOARD)
+    ant_control_pins = (16,18)
+    GPIO.setup(ant_control_pins, GPIO.OUT)
 
-GPIO.setwarnings(False)
-GPIO.setmode(GPIO.BOARD)
-ant_control_pins = (16,18)
-GPIO.setup(ant_control_pins, GPIO.OUT)
+    #Ant 1 Enabled
+    GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+except:
+    print("Cannot import GPIO. Maybe not on a pi?")
 
-#Ant 1 Enabled
-GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+
 
 np.seterr(divide='ignore')
 
@@ -334,13 +338,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_sync_params(self):
         if self.checkBox_en_sync_display.checkState():
-            self.module_signal_processor.en_sync = True
             #Ant 1 Disabled
-            GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
+            try:
+                GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
+            except:
+                pass
+            self.module_signal_processor.en_sync = True
         else:
             self.module_signal_processor.en_sync = False
             #Ant 1 Enabled
-            GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+            try:
+                GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+            except:
+                pass
     def set_spectrum_params(self):
         if self.checkBox_en_spectrum.checkState():
             self.module_signal_processor.en_spectrum = True
@@ -385,6 +395,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.module_signal_processor.center_freq=self.doubleSpinBox_center_freq.value() *10**6
         self.module_receiver.reconfigure_tuner(center_freq, sample_rate, gain)
+        self.auto_cal()
 
     def switch_noise_source(self):
         if self.checkBox_en_noise_source.checkState():
@@ -393,6 +404,35 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.module_signal_processor.noise_checked = False
             self.module_receiver.switch_noise_source(0)
+
+    def auto_cal(self):
+        try:
+            #Pre-cal setup:
+            self.set_default_configuration()
+            #Ant 1 Disabled
+            GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
+            #DC Comp Off
+            self.module_receiver.en_dc_compensation = False
+            #Tap size  to 0
+            tap_size = 0
+            bw = self.doubleSpinBox_filterbw.value() * 10**3  # ->[kHz]
+            self.module_receiver.set_fir_coeffs(tap_size, bw)
+            #decimation to 1
+            self.module_receiver.decimation_ratio = 1
+            self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
+            #Run Cal
+            self.module_signal_processor.en_sync = True
+            self.module_signal_processor.en_sample_offset_sync=True
+            self.module_signal_processor.en_calib_iq=True
+            #Post-cal teardown:
+            self.module_signal_processor.en_sync = False
+            self.set_iq_preprocessing_params()
+            #Ant 1 Enabled
+            GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+        except NameError as e:
+            print(e)
+            print("Cannot AutoCal, GPIO not available")
+
     def set_iq_preprocessing_params(self):
         """
             Update IQ preprocessing parameters
