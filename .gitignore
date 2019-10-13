@@ -1,5 +1,7 @@
 build/
 views/static/
+token.txt
+tokens.txt
 log_*
 *.so
 *.o

@@ -29,6 +29,7 @@ import scipy
 from bottle import route, run, request, get, post, redirect, template, static_file
 import threading
 import subprocess
+#from configparser import ConfigParser
 import xml.etree.ElementTree as ET
 gpio_error = None
 try:
@@ -44,7 +45,8 @@ except ModuleNotFoundError as e:
     gpio_error = e
     print("Cannot import GPIO. Maybe not on a pi?")
 
-
+# parser = SafeConfigParser()
+# parser.read(sys.argv[])
 
 np.seterr(divide='ignore')
 
@@ -832,8 +834,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def wr_xml(self, doa, conf, pwr):
         station_id = sys.argv[3]
-        latitude = sys.argv[4]
-        longitude = sys.argv[5]
+        if sys.argv[4] == "Tesla":
+            with open("/ram/TeslaLocation.txt", "r") as loc_file:
+                content = loc_file.read().splitlines()
+                latitude = content[0]
+                longitude = content[1]
+                heading = content[2]
+        else:
+            latitude = sys.argv[4]
+            longitude = sys.argv[5]
+            heading = 0
         epoch_time = int(1000 * round(time.time(), 3))
         # create the file structure
         data = ET.Element('DATA')
@@ -853,7 +863,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         xml_freq.text = str(self.doubleSpinBox_center_freq.value())
         xml_latitide.text = str(latitude)
         xml_longitude.text = str(longitude)
-        xml_heading.text = str(0)
+        xml_heading.text = str(heading)
         xml_doa.text = doa
         xml_pwr.text = pwr
         xml_conf.text = conf
@@ -863,6 +873,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.DOA_res_fd.seek(0)
         self.DOA_res_fd.write(html_str)
         self.DOA_res_fd.truncate()
+        #print("Wrote XML")
 
     def RD_plot(self):
         """
