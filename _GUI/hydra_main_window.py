@@ -326,6 +326,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif ant_arrangement_index == "UCA":
             ant_spacing = ((ant_meters/wave_length)/math.sqrt(2))
+        print(ant_spacing)
 
         return ant_spacing
 
@@ -403,6 +404,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         global gpio_error
         if self.checkBox_en_autocal.checkState() and gpio_error == None:
             self.label_autocal_status.setText("Ready")
+            time.sleep(1)
             self.auto_cal()
         elif gpio_error != None:
             red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
