@@ -407,10 +407,13 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             time.sleep(1)
             self.auto_cal()
         elif gpio_error != None:
-            red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
-            red_text += "No GPIO"
-            red_text += ("</span>")
-            self.label_autocal_status.setText(red_text)
+            # red_text = '<span style="font-size:8pt; font-weight:600; color:#ff0000;">No GPIO</span>'
+            # print(red_text)
+            # red_text += "No GPIO"
+            # print(red_text)
+            # red_text += ("</span>")
+            # print(red_text)
+            self.label_autocal_status.setText("No GPIO")
             print("Cannot AutoCal, GPIO not available")
         else:
             self.label_autocal_status.setText("Off")
@@ -465,11 +468,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
                 self.label_autocal_status.setText("Success")
                 print("Auto-Cal Success")
-            except NameError as e:
-                red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
-                red_text += "No GPIO"
-                red_text += ("</span>")
-                self.label_autocal_status.setText(red_text)
+            except NameError:
+                # red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
+                # red_text += "No GPIO"
+                # red_text += ("</span>")
+                self.label_autocal_status.setText("No GPIO")
                 print("Cannot AutoCal, GPIO not available")
 
     def set_iq_preprocessing_params(self):
@@ -597,7 +600,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def pb_proc_control_clicked(self):
         if self.pushButton_proc_control.text() == "Start processing":
             self.pushButton_proc_control.setText("Stop processing")
-
 
             self.module_signal_processor.start()
 
@@ -1225,9 +1227,11 @@ def do_init():
 
     if (request.POST.get('start') == 'start'):
         form.module_signal_processor.start()
+        form.pushButton_proc_control.setText("Stop processing")
 
     if (request.POST.get('stop') == 'stop'):
         form.module_signal_processor.stop()
+        form.pushButton_proc_control.setText("Start processing")
 
     if (request.POST.get('start_spec') == 'start_spec'):
         form.checkBox_en_spectrum.setChecked(True)
@@ -1246,6 +1250,9 @@ def do_init():
 def stats():
 
     upd_rate = form.label_update_rate.text()
+    # try:
+    #     autocal_status = form.label_autocal_status.text().split(">")[1].split("<")[0]
+    # except IndexError:
     autocal_status = form.label_autocal_status.text()
 
     if(form.module_receiver.overdrive_detect_flag):

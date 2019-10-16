@@ -218,7 +218,7 @@
         <input type="hidden" name="stop" value="stop" />
 	<p><input value="Stop Processing" type="submit" style="height:40px;"/></p>
 </form>
-<iframe width=100% height=5% src="http://{{ip_addr}}:8080/stats"></iframe>
+<iframe width=100% height=10% src="http://{{ip_addr}}:8080/stats"></iframe>
 <hr>
 <form action="/init" method="post">
         <input type="hidden" name="reboot" value="reboot" />
