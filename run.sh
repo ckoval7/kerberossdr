@@ -33,7 +33,7 @@ echo '3' | sudo dd of=/proc/sys/vm/drop_caches status=none
 echo "Starting KerberosSDR"
 
 # Kill old instances
-sudo pkill $(ps aux | grep 'rtl' | awk '{print $2}')
+sudo kill $(ps aux | grep 'rtl' | awk '{print $2}') 2>/dev/null || true
 sudo pkill rtl_daq
 sudo pkill sim
 sudo pkill sync
