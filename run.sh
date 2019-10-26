@@ -2,6 +2,7 @@
 
 BUFF_SIZE=256 #Must be a power of 2. Normal values are 128, 256. 512 is possible on a fast PC.
 IPADDR="0.0.0.0"
+IPPORT="8081"
 
 ### Uncomment the following section to automatically get the IP address from interface wlan0 ###
 ### Don't forget to comment out "IPADDR="0.0.0.0" ###
@@ -27,12 +28,12 @@ IPADDR="0.0.0.0"
 
 # Clear memory
 sudo sh -c "echo 0 > /sys/module/usbcore/parameters/usbfs_memory_mb"
-echo '3' | sudo tee /proc/sys/vm/drop_caches
+echo '3' | sudo dd of=/proc/sys/vm/drop_caches status=none
 
 echo "Starting KerberosSDR"
 
 # Kill old instances
-sudo kill $(ps aux | grep 'rtl' | awk '{print $2}')
+sudo kill $(ps aux | grep 'rtl' | awk '{print $2}') 2>/dev/null || true
 sudo pkill rtl_daq
 sudo pkill sim
 sudo pkill sync
@@ -66,4 +67,5 @@ curr_user=$(whoami)
 sudo chrt -r 50 ionice -c 1 -n 0 ./_receiver/C/rtl_daq $BUFF_SIZE 2>log_rtl_daq 1| sudo chrt -r 50 ./_receiver/C/sync $BUFF_SIZE 2>log_sync 1| sudo chrt -r 50 ./_receiver/C/gate $BUFF_SIZE 2>log_gate 1|sudo nice -n -20 sudo -u $curr_user python3 -O _GUI/hydra_main_window.py $BUFF_SIZE $IPADDR &>log_python&
 
 # Start PHP webserver which serves the updating images
-sudo php -S $IPADDR:8081 -t _webDisplay >&- 2>&-
+echo "Server running at $IPADDR:$IPPORT"
+sudo php -S $IPADDR:$IPPORT -t _webDisplay >&- 2>&-
