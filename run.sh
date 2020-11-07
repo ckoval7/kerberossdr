@@ -5,17 +5,21 @@ BUFF_SIZE=256 #Must be a power of 2. Normal values are 128, 256. 512 is possible
 #IPADDR="10.0.0.134"
 # IPADDR="172.16.0.79"
 # IPADDR="192.168.4.1"
+APIPA='169.254'
 IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
-while [ "$IPADDR" == "" ] || [ "$IPADDR" == "169.*" ]
+echo "$IPADDR" > ipaddr.txt
+while [ "$IPADDR" == "" ] || [ "$IPADDR" == "$APIPA"* ]
 do
 sleep 1
+echo "sleeping..." >> ipaddr.txt
 echo "waiting for network"
+done
 IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 echo $IPADDR
-done
-STATION_ID="K3CPK-1"
-LAT="Tesla" #"39.124725"
-LON=""
+#done
+STATION_ID="MyStation"
+LAT="0.0"
+LON="0.0"
 
 # Useful to set this on low power ARM devices
 #sudo cpufreq-set -g performance
