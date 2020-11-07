@@ -45,7 +45,6 @@
                     <input type="number" value="{{center_freq}}" min="24" max="1700" step="0.0001" name="center_freq"/>
                 </div>
             </div>
-  <input id="autocal" type="checkbox" name="autocal" value="on" {{!'checked="checked"' if autocal >= 1 else ""}}> Auto calibration<br>
 
             <div class="field">
                 <div class="field-label">
@@ -296,21 +295,6 @@
         </form>
     </div>
 
-<form action="/init" method="post">
-        <input type="hidden" name="start" value="start" />
-	<p><input value="Start Processing" type="submit" style="height:40px;"/></p>
-</form>
-<form action="/init" method="post">
-        <input type="hidden" name="stop" value="stop" />
-	<p><input value="Stop Processing" type="submit" style="height:40px;"/></p>
-</form>
-<iframe width=100% height=10% src="http://{{ip_addr}}:8080/stats"></iframe>
-<hr>
-<form action="/init" method="post">
-        <input type="hidden" name="reboot" value="reboot" />
-	<p><input value="Reboot Software" type="submit" style="height:40px;"/></p>
-</form>
-<div>
 <script type="text/javascript" src="/static/refresh_image.js" charset="utf-8" style="float:right"></script>
     <div class="card">
         <form action="/init" method="post">
