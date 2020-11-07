@@ -2,10 +2,12 @@
 /*Tags*/
 body {
   background-color: #f7f5f5;
+  margin: 0px;
+  padding: 0px;
 }
 *{
     font-size:18px;
-    text-align: center;
+    font-family: 'Montserrat', sans-serif;
 }
 h2{
     font-size:22px;
@@ -21,12 +23,6 @@ input[type="checkbox"]{
   border:2px solid #555;
   vertical-align: text-bottom;
 }
-input[type="submit"]{
-    background-color: #555555;
-    color: white;
-    font-size:20px;
-    border: 2px solid #355555;
-}
 select{
   background-color: #555555;
   color: white;
@@ -37,59 +33,89 @@ select:disabled{
   background-color: #777777;
   color: #999999;
 }
+input, select{
+    width: 100%;
+}
+iframe{
+  background-color: transparent;
+  border: 0px none transparent;
+  padding: 0px;
+  overflow: hidden;
+}
 /*Classes*/
+.header{
+  background-color: #555555;
+  width: 100%;
+  text-align: center;
+  padding: 10px;
+}
+.header a{
+  color: white;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 5px;
+  line-height: 40px;
+}
+.header a:hover, .header #active{
+  background-color: rgba(0,0,0,0.2);
+}
 .doa_check{
   text-align: left;
 }
-
-/*IDs*/
-#set_cal_all{
-  width: 300px;
-  white-space: normal;
+.btn{
+  height: 40px;
+  cursor: pointer;
+  background-color: #555555;
+  border: 1px solid transparent;
+  color: white;
+  font-size:20px;
+  text-decoration: none;
+  text-align: center;
+  width: 100%;
 }
-#doa_checkboxes{
+.btn a{
+    color: white;
+    text-decoration: none;
+    position: relative;
+    top: 15%;
+}
+.card{
+ background-color: #ffffff;
+ width: 450px;
+ max-width: 500px;
+ padding: 20px;
+ box-shadow: 0 6px 18px rgba(0, 0, 0, 0.46);
+ margin: 20px;
+ float: left;
+}
+.field{
+  width: 400px;
+  display: block;
+  margin: 10px auto;
+  padding: 5px;
+}
+.field-label{
+  width: 250px;
   display: inline-block;
-  text-align: left;
+  vertical-align: top;
+}
+.field-body{
+  width: 144px;
+  display: inline-block;
 }
 
 /*Mobile Properties*/
-@media screen and (max-width: 525px) {
-  *{
-      font-size:24px;
-      text-align: center;
+@media screen and (max-width: 1072px) {
+  .card{
+    width: calc( 100% - 30px );
+    padding: 5px;
+    margin: 20px auto;
+    float: none;
   }
-  h2{
-      font-size:30px;
-  }
-  a{
-    font-size: 24px;
-  }
-  input[type="checkbox"]{
-    width:20px;
-    height:20px;
-    background:white;
-    border-radius:5px;
-    border:2px solid #555;
-    vertical-align: text-bottom;
-  }
-  input[type="submit"]{
-      background-color: #555555;
-      color: white;
-      font-size:28px;
-      border: 2px solid #355555;
-  }
-  select{
-    background-color: #555555;
-    color: white;
-    font-size:28px;
-    border: 2px solid #355555;
-  }
-  select:disabled{
-    background-color: #777777;
-    color: #999999;
-  }
-  #set_cal_all{
-    width: 300px;
-    white-space: normal;
+}
+
+@media screen and (max-width: 500px) {
+  .field, .field-label, .field-body, input{
+    width: calc( 100% - 15px );
   }
 }

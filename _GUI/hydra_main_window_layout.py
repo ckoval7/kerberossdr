@@ -640,6 +640,22 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.groupBox_10)
 
 
+        # Peak hold groupbox
+        self.groupBox_11 = QtGui.QGroupBox(self.page_3)
+        self.groupBox_11.setObjectName(_fromUtf8("groupBox_11"))
+        self.gridLayout_25 = QtGui.QGridLayout(self.groupBox_11)
+        self.gridLayout_25.setObjectName(_fromUtf8("gridLayout_25"))
+        self.label_37 = QtGui.QLabel(self.groupBox_11)
+        self.label_37.setObjectName(_fromUtf8("label_37"))
+        self.gridLayout_25.addWidget(self.label_37, 0, 0, 1, 1)
+        self.checkBox_en_peakhold = QtGui.QCheckBox(self.groupBox_11)
+        self.checkBox_en_peakhold.setText(_fromUtf8(""))
+        self.checkBox_en_peakhold.setObjectName(_fromUtf8("checkBox_en_peakhold"))
+        self.gridLayout_25.addWidget(self.checkBox_en_peakhold, 0, 1, 1, 1)
+        self.verticalLayout_3.addWidget(self.groupBox_11)
+
+
+
         self.stackedWidget_config.addWidget(self.page_3)
         self.verticalLayout_6.addWidget(self.stackedWidget_config)
         self.groupBox_6 = QtGui.QGroupBox(self.centralwidget)
@@ -935,6 +951,10 @@ class Ui_MainWindow(object):
         self.comboBox_cc_det_windowing.setItemText(0, _translate("KerberosSDR", "Rectangular", None))
         self.comboBox_cc_det_windowing.setItemText(1, _translate("KerberosSDR", "Hamming", None))
         self.label_31.setText(_translate("KerberosSDR", "Dynamic range: ", None))
+
+        self.groupBox_11.setTitle(_translate("MainWindow", "Peak Hold", None))
+        self.label_37.setText(_translate("MainWindow", "Peak Hold: ", None))
+
 
         self.groupBox_10.setTitle(_translate("MainWindow", "Automatic detection (CA-CFAR)", None))
         self.label_35.setToolTip(_translate("MainWindow", "<html><head/><body><p>Estimation window has a rectangular shape ( L x L cell), where L is the input data here</p></body></html>", None))

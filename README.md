@@ -1,3 +1,7 @@
+<h4>Ubuntu 20.04 Users NOTE:</h4>
+
+Note that on Ubuntu 20.04 or newer PyQt4 is no longer available. A contributor has created his own modification to the code which uses PyQt5. You can try it at this link https://github.com/rfjohnso/kerberossdr
+
 <h4>Change Log</h4>
 
 * Selecting “Uniform Gain” will allow you to set the same gain value for all four receivers.
@@ -17,7 +21,7 @@
 1. <h4>Install Dependencies via apt:</h4>
 
   `sudo apt update`<br>
-  `sudo apt install python3-pip python3-pyqt4 build-essential gfortran libatlas3-base libatlas-base-dev python3-dev python3-setuptools libffi6 libffi-dev python3-tk pkg-config libfreetype6-dev php7.2-cli`
+  `sudo apt install python3-pip python3-pyqt4 pyqt4-dev-tools build-essential gfortran libatlas3-base libatlas-base-dev python3-dev python3-setuptools libffi6 libffi-dev python3-tk pkg-config libfreetype6-dev php7.2-cli`
 
 2. <h4>Uninstall any preinstalled numpy packages as we want to install with pip3 to get optimized BLAS.</h4>
 
@@ -65,6 +69,7 @@ Install KerberosSDR Demo Software
 7. <h4>Clone or unzip the software</h4>
 
   `git clone https://github.com/rtlsdrblog/kerberossdr`<br>
+  `cd kerberossdr`<br>
   `sh setup_init.sh`
 
 8. <h4>Now you can run the software by typing</h4>

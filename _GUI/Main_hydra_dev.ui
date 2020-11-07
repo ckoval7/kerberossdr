@@ -26,7 +26,7 @@
          </size>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="page_4">
          <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -41,16 +41,16 @@
                <item row="0" column="1">
                 <widget class="QDoubleSpinBox" name="doubleSpinBox_center_freq">
                  <property name="decimals">
-                  <number>3</number>
+                  <number>4</number>
                  </property>
                  <property name="minimum">
-                  <double>20.000000000000000</double>
+                  <double>25.0000</double>
                  </property>
                  <property name="maximum">
-                  <double>2000.000000000000000</double>
+                  <double>2000.0000</double>
                  </property>
                  <property name="value">
-                  <double>100.000000000000000</double>
+                  <double>100.0000</double>
                  </property>
                 </widget>
                </item>
@@ -69,24 +69,24 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_sampling_freq">
+                <widget class="QDoubleSpinBox" name="label_gain_3">
                  <property name="minimum">
-                  <double>1.000000000000000</double>
+                  <double>1.0000</double>
                  </property>
                  <property name="maximum">
-                  <double>3.200000000000000</double>
+                  <double>3.2000</double>
                  </property>
                 </widget>
                </item>
                <item row="2" column="0">
-                <widget class="QLabel" name="label_18">
+                <widget class="QLabel" name="label_gain_4">
                  <property name="text">
-                  <string>Gain [dB]:</string>
+                  <string>RX1 Gain [dB]:</string>
                  </property>
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QComboBox" name="comboBox_gain">
+                <widget class="QComboBox" name="comboBox_gain_4">
                  <item>
                   <property name="text">
                    <string>0</string>
@@ -292,17 +292,17 @@
                <item row="1" column="1">
                 <widget class="QDoubleSpinBox" name="doubleSpinBox_filterbw">
                  <property name="maximum">
-                  <double>3400.000000000000000</double>
+                  <double>3400.0000</double>
                  </property>
                  <property name="value">
-                  <double>150.000000000000000</double>
+                  <double>150.0000</double>
                  </property>
                 </widget>
                </item>
                <item row="2" column="1">
                 <widget class="QSpinBox" name="spinBox_fir_tap_size">
                  <property name="toolTip">
-                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set to 0 to disable FIR filtering&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set to 0 to disable FIR filtering.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="maximum">
                   <number>10000</number>
@@ -436,7 +436,7 @@
                <item row="1" column="0">
                 <widget class="QLabel" name="label_24">
                  <property name="text">
-                  <string>Spacing [lambda]:</string>
+                  <string>Spacing [meters]:</string>
                  </property>
                 </widget>
                </item>
@@ -462,11 +462,8 @@
                  <property name="decimals">
                   <number>4</number>
                  </property>
-                 <property name="maximum">
-                  <double>10.000000000000000</double>
-                 </property>
                  <property name="value">
-                  <double>0.500000000000000</double>
+                  <double>0.5000</double>
                  </property>
                 </widget>
                </item>
@@ -548,7 +545,7 @@
                   <number>22</number>
                  </property>
                  <property name="value">
-                  <number>10</number>
+                  <number>15</number>
                  </property>
                 </widget>
                </item>
@@ -747,7 +744,7 @@
                   <number>16384</number>
                  </property>
                  <property name="value">
-                  <number>32</number>
+                  <number>127</number>
                  </property>
                 </widget>
                </item>
@@ -804,10 +801,10 @@
                   <item row="0" column="1">
                    <widget class="QDoubleSpinBox" name="doubleSpinBox_cc_det_max_range">
                     <property name="maximum">
-                     <double>100000.000000000000000</double>
+                     <double>100000.0000</double>
                     </property>
                     <property name="value">
-                     <double>128.000000000000000</double>
+                     <double>128.0000</double>
                     </property>
                    </widget>
                   </item>
@@ -838,7 +835,7 @@
                      <number>100</number>
                     </property>
                     <property name="value">
-                     <number>40</number>
+                     <number>20</number>
                     </property>
                    </widget>
                   </item>

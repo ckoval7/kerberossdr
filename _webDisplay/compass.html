@@ -1,14 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">        
-	<head>
-		<meta charset="utf-8" />
-		<title>Animated Compass</title>
-		<script src='compass.js'></script>
-	</head>
-	<body onload='init();'>
-		<canvas id="compass" width="800" height="800"></canvas>
-	</body>
-	<p id="doa"> Estimated DOA: 0 deg </p>
-	<p id="pwr"> Signal Power: 0 dB </p>
-	<p id="conf"> DOA Confidence: 0 </p>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Animated Compass</title>
+        <script src='compass.js'></script>
+        <style>
+        .input{ width:55px;}
+        </style>
+    </head>
+    <body onload='init();'>
+        <canvas id="compass"></canvas>
+    </body>
+    <p id="doa"> Estimated DOA: 0 deg </p>
+    <p id="pwr"> Signal Power: 0 dB </p>
+    <p id="conf"> DOA Confidence: 0 </p>
+    <hr>
+    <form onsubmit="setCookie()">
+        <input type="number" class="input" step="0.01" min="0" value="0" max="100" name="MIN_PWR" id="MIN_PWR">
+        <label for"MIN_PWR">Min Power</label>
+        <br>
+        <input type="number" class="input" step="1" min="0" value="0" max="100" name="MIN_CONF" id="MIN_CONF">
+        <label for"MIN_CONF">Min Confidence</label>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
 </html>
