@@ -2,15 +2,12 @@
 
 Note that on Ubuntu 20.04 or newer PyQt4 is no longer available. A contributor has created his own modification to the code which uses PyQt5. You can try it at this link https://github.com/rfjohnso/kerberossdr
 
+**This branch is not available PyQt5 currently**
+
 <h4>Change Log</h4>
 
-* Selecting “Uniform Gain” will allow you to set the same gain value for all four receivers.
-* The antenna spacing value (s, fraction of wavelength) is automatically calculated based on frequency and a user set antenna spacing (s’, meters). For circular arrays, just use the spacing between each antenna, the program will calculate the radius for you.
-* I’ve added a button to the Web UI to enable the sync display and the noise source in one click. If the noise source or the sync display (or both) is enabled the button will disable both. This should make calibration less cumbersome on mobile devices.
-* I've added CSS to the Web UI. This will allow for easy customization of the layout and adds a mobile friendly flare. Feel free to edit ./static/style.css to your liking.
-* The graphs hurt less to look at.
-* Fixed the backwards compass reading in JavaScript. This is just a bandaid. The reading should be fixed at the origin and the Android App updated to take the correct reading.
-
+* Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
+  * This new format does not break app compatibility
 
 <h3>Please see the software tutorial at www.rtl-sdr.com/ksdr</h3>
 
