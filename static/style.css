@@ -47,7 +47,8 @@ iframe{
   background-color: #555555;
   width: 100%;
   text-align: center;
-  padding: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .header a{
   color: white;
