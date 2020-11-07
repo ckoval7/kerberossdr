@@ -3,24 +3,14 @@
 BUFF_SIZE=256 #Must be a power of 2. Normal values are 128, 256. 512 is possible on a fast PC.
 IPPORT="8081"
 IPADDR="0.0.0.0"
-#IPADDR="10.0.0.134"
-# IPADDR="172.16.0.79"
-# IPADDR="192.168.4.1"
+
 APIPA='169.254'
-# IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
-# echo "$IPADDR" > ipaddr.txt
-# while [ "$IPADDR" == "" ] || [ "$IPADDR" == "$APIPA"* ]
-# 	do
-# 	sleep 1
-# 	echo "sleeping..." >> ipaddr.txt
-# 	echo "waiting for network"
-# done
-# IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
-echo $IPADDR
+
 #done
 STATION_ID="MyStation"
-LAT="0.0"
-LON="0.0"
+LAT="0.0" #positive or negative decimal degrees
+LON="0.0" #positive or negative decimal degrees
+HEADING="0" #Relative to true north
 
 # set to /dev/null for no logging, set to some file for logfile. You can also set it to the same file.
 #RTLDAQLOG="rtl_daq.log"
@@ -31,7 +21,7 @@ LON="0.0"
 RTLDAQLOG="/dev/null"
 SYNCLOG="/dev/null"
 GATELOG="/dev/null"
-PYTHONLOG="-"
+PYTHONLOG="/dev/null"
 
 # If you want to kill all matching processes on startup without prompt. Otherwise, set it to anything else.
 FORCE_KILL="yes"
@@ -49,6 +39,8 @@ NPROC=`expr $(nproc) - 1`
 # IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 # echo $IPADDR
 # done
+
+echo $IPADDR
 
 ### End of Section ###
 
@@ -128,21 +120,11 @@ mkfifo _receiver/C/rec_control_fifo
 # Start programs at realtime priority levels
 curr_user=$(whoami)
 
-# Comment the above and uncomment the below to show all errors to the log files
-# sudo chrt -r 50 ionice -c 1 -n 0 ./_receiver/C/rtl_daq $BUFF_SIZE 2>log_rtl_daq 1 \
-# | sudo chrt -r 50 ./_receiver/C/sync $BUFF_SIZE 2>log_sync 1 \
-# | sudo chrt -r 50 ./_receiver/C/gate $BUFF_SIZE 2>log_gate 1 \
-# | sudo nice -n -20 sudo -u $curr_user python3 -O _GUI/hydra_main_window.py $BUFF_SIZE $IPADDR $STATION_ID $LAT $LON &> log_python &
-
-
 sudo chrt -r 50 taskset -c $NPROC ionice -c 1 -n 0 ./_receiver/C/rtl_daq $BUFF_SIZE 2>$RTLDAQLOG 1| \
 	sudo chrt -r 50 taskset -c $NPROC ./_receiver/C/sync $BUFF_SIZE 2>$SYNCLOG 1| \
 	sudo chrt -r 50 taskset -c $NPROC ./_receiver/C/gate $BUFF_SIZE 2>$GATELOG 1| \
-	sudo nice -n -20 sudo -u $curr_user python3 -O _GUI/hydra_main_window.py $BUFF_SIZE $IPADDR $STATION_ID $LAT $LON &>$PYTHONLOG &
+	sudo nice -n -20 sudo -u $curr_user python3 -O _GUI/hydra_main_window.py $BUFF_SIZE $IPADDR $STATION_ID $LAT $LON $HEADING &>$PYTHONLOG &
 
-if [ "$LAT" == "Tesla" ]; then
-python3 ./tesla_location.py &> log_tesla &
-fi
 # Start PHP webserver which serves the updating images
 echo "Python Server running at $IPADDR:8080"
 echo "PHP Server running at $IPADDR:$IPPORT"

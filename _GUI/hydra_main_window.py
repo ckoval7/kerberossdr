@@ -850,16 +850,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def wr_xml(self, doa, conf, pwr):
         station_id = sys.argv[3]
-        if sys.argv[4] == "Tesla":
-            with open("/ram/TeslaLocation.txt", "r") as loc_file:
-                content = loc_file.read().splitlines()
-                latitude = content[0]
-                longitude = content[1]
-                heading = content[2]
-        else:
-            latitude = sys.argv[4]
-            longitude = sys.argv[5]
-            heading = 0
+        latitude = sys.argv[4]
+        longitude = sys.argv[5]
+        heading = sys.argv[6]
         epoch_time = int(1000 * round(time.time(), 3))
         # create the file structure
         data = ET.Element('DATA')
