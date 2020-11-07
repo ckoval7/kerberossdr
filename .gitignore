@@ -15,9 +15,5 @@ sim
 sync
 __pycache__
 *.save
-_webDisplay/DOA_value.html
-doa.jpg
-spectrum.jpg
-static/DOA_value.html
 ipaddr.txt
 *strace.txt
