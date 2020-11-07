@@ -1,13 +1,13 @@
+<h4>Change Log</h4>
+
+* Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
+  * This new format does not break app compatibility
+
 <h4>Ubuntu 20.04 Users NOTE:</h4>
 
 Note that on Ubuntu 20.04 or newer PyQt4 is no longer available. A contributor has created his own modification to the code which uses PyQt5. You can try it at this link https://github.com/rfjohnso/kerberossdr
 
 **This branch is not available PyQt5 currently**
-
-<h4>Change Log</h4>
-
-* Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
-  * This new format does not break app compatibility
 
 <h3>Please see the software tutorial at www.rtl-sdr.com/ksdr</h3>
 
