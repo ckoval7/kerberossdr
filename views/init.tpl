@@ -296,20 +296,6 @@
         </form>
     </div>
 
-<form action="/init" method="post">
-        <input type="hidden" name="start" value="start" />
-	<p><input value="Start Processing" type="submit" style="height:40px;"/></p>
-</form>
-<form action="/init" method="post">
-        <input type="hidden" name="stop" value="stop" />
-	<p><input value="Stop Processing" type="submit" style="height:40px;"/></p>
-</form>
-<iframe width=100% height=10% src="http://{{ip_addr}}:8080/stats"></iframe>
-<hr>
-<form action="/init" method="post">
-        <input type="hidden" name="reboot" value="reboot" />
-	<p><input value="Reboot Software" type="submit" style="height:40px;"/></p>
-</form>
 <div>
 <script type="text/javascript" src="/static/refresh_image.js" charset="utf-8" style="float:right"></script>
     <div class="card">
