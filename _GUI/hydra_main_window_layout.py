@@ -262,10 +262,6 @@ class Ui_MainWindow(object):
         self.comboBox_gain_4.addItem(_fromUtf8(""))
         self.gridLayout_16.addWidget(self.comboBox_gain_4, 6, 1, 1, 1)
 
-        self.checkBox_en_autocal = QtGui.QCheckBox(self.groupBox_7)
-        self.checkBox_en_autocal.setObjectName(_fromUtf8("checkBox_en_autocal"))
-        self.gridLayout_16.addWidget(self.checkBox_en_autocal, 7, 0, 1, 1)
-
         self.gridLayout_17.addLayout(self.gridLayout_16, 0, 0, 1, 1)
         self.pushButton_set_receiver_config = QtGui.QPushButton(self.groupBox_7)
         self.pushButton_set_receiver_config.setObjectName(_fromUtf8("pushButton_set_receiver_config"))
@@ -677,12 +673,6 @@ class Ui_MainWindow(object):
         self.label_22 = QtGui.QLabel(self.groupBox_6)
         self.label_22.setObjectName(_fromUtf8("label_22"))
         self.gridLayout_14.addWidget(self.label_22, 0, 0, 1, 1)
-        self.label_autocal_status = QtGui.QLabel(self.groupBox_6)
-        self.label_autocal_status.setObjectName(_fromUtf8("label_autocal_status"))
-        self.gridLayout_14.addWidget(self.label_autocal_status, 2, 1, 1, 1)
-        self.autocal_context = QtGui.QLabel(self.groupBox_6)
-        self.autocal_context.setObjectName(_fromUtf8("autocal_context"))
-        self.gridLayout_14.addWidget(self.autocal_context, 2, 0, 1, 1)
         self.gridLayout_15.addLayout(self.gridLayout_14, 3, 0, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout_15.addItem(spacerItem1, 6, 0, 1, 1)
@@ -763,8 +753,6 @@ class Ui_MainWindow(object):
         self.comboBox_sampling_freq.setCurrentIndex(2)
 
         self.checkBox_en_uniform_gain.setText(_translate("MainWindow", "Uniform Gain", None))
-        self.checkBox_en_autocal.setText(_translate("MainWindow", "Auto Calibration", None))
-
 
         self.label_3.setText(_translate("KerberosSDR", "Center frequency [MHz]:", None))
         self.label_18.setText(_translate("KerberosSDR", "RX1 Gain [dB]:", None))
@@ -976,8 +964,6 @@ class Ui_MainWindow(object):
         self.label_17.setText(_translate("KerberosSDR", "Powel level:", None))
         self.label_update_rate.setText(_translate("KerberosSDR", "-ms", None))
         self.label_22.setText(_translate("KerberosSDR", "Update rate:", None))
-        self.label_autocal_status.setText(_translate("KerberosSDR", "Off", None))
-        self.autocal_context.setText(_translate("KerberosSDR", "AutoCal Status:", None))
         self.pushButton_close.setText(_translate("KerberosSDR", "Exit", None))
         self.pushButton_proc_control.setText(_translate("KerberosSDR", "Start processing", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab_spectrum), _translate("KerberosSDR", "Configuration and Spectrum", None))
