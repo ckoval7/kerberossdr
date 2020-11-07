@@ -1,6 +1,8 @@
-Don't use the "dev" branch, it usually has untested code.
+<h4>Ubuntu 20.04 Users NOTE:</h4>
 
-<h4>This fork adds a few GUI and Web UI improvements and convenience features:</h4>
+Note that on Ubuntu 20.04 or newer PyQt4 is no longer available. A contributor has created his own modification to the code which uses PyQt5. You can try it at this link https://github.com/rfjohnso/kerberossdr
+
+<h4>Change Log</h4>
 
 * Selecting “Uniform Gain” will allow you to set the same gain value for all four receivers.
 * The antenna spacing value (s, fraction of wavelength) is automatically calculated based on frequency and a user set antenna spacing (s’, meters). For circular arrays, just use the spacing between each antenna, the program will calculate the radius for you.
@@ -18,8 +20,8 @@ Don't use the "dev" branch, it usually has untested code.
 
 1. <h4>Install Dependencies via apt:</h4>
 
-  `sudo apt update
-sudo apt install python3-pip python3-pyqt4 build-essential gfortran libatlas3-base libatlas-base-dev python3-dev python3-setuptools libffi6 libffi-dev python3-tk pkg-config libfreetype6-dev php7.2-cli`
+  `sudo apt update`<br>
+  `sudo apt install python3-pip python3-pyqt4 pyqt4-dev-tools build-essential gfortran libatlas3-base libatlas-base-dev python3-dev python3-setuptools libffi6 libffi-dev python3-tk pkg-config libfreetype6-dev php7.2-cli`
 
 2. <h4>Uninstall any preinstalled numpy packages as we want to install with pip3 to get optimized BLAS.</h4>
 
@@ -27,33 +29,33 @@ sudo apt install python3-pip python3-pyqt4 build-essential gfortran libatlas3-ba
 
 3. <h4>Install Dependencies via pip3:</h4>
 
-  `pip3 install numpy
-pip3 install matplotlib
-pip3 install scipy
-pip3 install cairocffi
-pip3 install pyapril
-pip3 install pyargus
-pip3 install pyqtgraph
-pip3 install peakutils
-pip3 install bottle
-pip3 install paste`
+  `pip3 install numpy`<br>
+  `pip3 install matplotlib`<br>
+  `pip3 install scipy`<br>
+  `pip3 install cairocffi`<br>
+  `pip3 install pyapril`<br>
+  `pip3 install pyargus`<br>
+  `pip3 install pyqtgraph`<br>
+  `pip3 install peakutils`<br>
+  `pip3 install bottle`<br>
+  `pip3 install paste`<br>
 
 4. <h4>Install RTL-SDR-Kerberos Drivers</h4>
 
   Our Kerberos RTL-SDR driver branch contains code for slightly modified Osmocom RTL-SDR drivers that enable GPIO, disable dithering, and disable zerocopy buffers which seems to cause trouble on some ARM devices.
 
-  `sudo apt-get install libusb-1.0-0-dev git cmake`
+  `sudo apt-get install libusb-1.0-0-dev git cmake`<br>
 
-  `git clone https://github.com/rtlsdrblog/rtl-sdr-kerberos`
+  `git clone https://github.com/rtlsdrblog/rtl-sdr-kerberos`<br>
 
-  `cd rtl-sdr-kerberos
-mkdir build
-cd build
-cmake ../ -DINSTALL_UDEV_RULES=ON
-make
-sudo make install
-sudo cp ../rtl-sdr.rules /etc/udev/rules.d/
-sudo ldconfig`
+  `cd rtl-sdr-kerberos`<br>
+  `mkdir build`<br>
+  `cd build`<br>
+  `cmake ../ -DINSTALL_UDEV_RULES=ON`<br>
+  `make`<br>
+  `sudo make install`<br>
+  `sudo cp ../rtl-sdr.rules /etc/udev/rules.d/`<br>
+  `sudo ldconfig`<br>
 
   `echo 'blacklist dvb_usb_rtl28xxu' | sudo tee --append /etc/modprobe.d/blacklist-dvb_usb_rtl28xxu.conf`
 
@@ -66,8 +68,9 @@ Install KerberosSDR Demo Software
 
 7. <h4>Clone or unzip the software</h4>
 
-  `git clone https://github.com/rtlsdrblog/kerberossdr
-sh setup_init.sh`
+  `git clone https://github.com/rtlsdrblog/kerberossdr`<br>
+  `cd kerberossdr`<br>
+  `sh setup_init.sh`
 
 8. <h4>Now you can run the software by typing</h4>
 

@@ -16,4 +16,5 @@ sync
 __pycache__
 *.save
 ipaddr.txt
+tokens.txt
 *strace.txt

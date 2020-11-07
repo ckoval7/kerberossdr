@@ -1,6 +1,6 @@
 /* KerberosSDR Python GUI
  *
- * Copyright (C) 2018-2019  Carl Laufer, Tamás Pető
+ * Copyright (C) 2018-2019  Carl Laufer, Tamás Peto
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  * Date    : 2018 09 10 - 2019 02 07
  * State   : Production
  * Version : 0.1
- * Author  : Tamás Pető
+ * Author  : Tamás Peto
  * Modifcations : Carl Laufer
  *
  *
@@ -58,7 +58,7 @@ gcc -std=c99 rtl_rec.h rtl_daq.c -lpthread -lrtlsdr -o rtl_daq
 
 #define CFN "_receiver/C/rec_control_fifo" /* Receiver control FIFO name */
 #define NOTUSED(V) ((void) V)
-#define ASYNC_BUF_NUMBER     30
+#define ASYNC_BUF_NUMBER     12
 
 #define DEFAULT_RATE         2000000
 #define DEFAULT_FREQ         107200000
@@ -148,21 +148,38 @@ void * fifo_read_tf(void* arg)
               rtl_receivers[i].center_freq = center_freq_read;
               rtl_receivers[i].sample_rate = sample_rate_read;
             }            
+
+            for(int i=0; i<NUM_CH; i++)
+            {                
+                if(rtlsdr_cancel_async(rtl_receivers[i].dev) != 0)
+                {
+                    fprintf(stderr, "[ ERROR ]  Async read stop failed: %s\n", strerror(errno));                
+                }
+                //fprintf(stderr, "[ INFO ] Async read stopped at device:%d\n",i);
+            }
+
+
+
         }
 	else if ( (char) signal == 'n')
         {
             //fprintf(stderr,"Signal 'n': Turn on noise source \n");            
             noise_source_state = 1;
 	    reconfig_trigger = 0;
+
+            rtlsdr_set_gpio(rtl_receivers[0].dev, 1, 0);
+
         }
         else if ( (char) signal == 'f')
         {
             //fprintf(stderr,"Signal 'f': Turn off noise source \n");            
             noise_source_state = 0;
             reconfig_trigger = 0;
+            rtlsdr_set_gpio(rtl_receivers[0].dev, 0, 0);
+
         }
   
-        pthread_cond_signal(&buff_ind_cond);
+        //pthread_cond_signal(&buff_ind_cond);
         //pthread_mutex_unlock(&buff_ind_mutex);
     }
     fclose(fd);
@@ -172,7 +189,7 @@ void * fifo_read_tf(void* arg)
 
 void rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx)
 {
-       // pthread_mutex_lock(&buff_ind_mutex);
+        //pthread_mutex_lock(&buff_ind_mutex);
 
         struct rtl_rec_struct *rtl_rec = (struct rtl_rec_struct *) ctx;// Set the receiver's structure
 
@@ -185,8 +202,10 @@ void rtlsdrCallback(unsigned char *buf, uint32_t len, void *ctx)
         writeOrder[rtl_rec->dev_ind] = true;
     	memcpy(rtl_rec->buffer, buf, len);
         //fprintf(stderr, "Read_buff_ind:%d, rtl_recbuff_ind:%d\n",rtl_rec->buff_ind, rtl_rec->buff_ind);
-        pthread_cond_signal(&buff_ind_cond);
-
+        if(writeOrder[0] && writeOrder[1] && writeOrder[2] && writeOrder[3])
+        {
+           pthread_cond_signal(&buff_ind_cond);
+        }
         //pthread_mutex_unlock(&buff_ind_mutex);
 }
 
@@ -246,9 +265,9 @@ return NULL;
 
 int main( int argc, char** argv )
 {
-    static char buf[262144 * 4 * 30];
+    //static char buf[262144 * 4 * 30];
 
-    setvbuf(stdout, buf, _IOFBF, sizeof(buf));
+    //setvbuf(stdout, NULL, _IOFBF, 0);
     fprintf(stderr, "[ INFO ] Starting multichannel coherent RTL-SDR receiver\n");
 
 
@@ -352,17 +371,14 @@ int main( int argc, char** argv )
       thread is woken up and the call returns. */
       pthread_cond_wait( &buff_ind_cond, &buff_ind_mutex);
 
-      data_ready = 0;
+      //data_ready = 0;
       // Do we have new data ready for the processing?
 
-      if(writeOrder[0] && writeOrder[1] && writeOrder[2] && writeOrder[3])
-          data_ready = 1;
-
-      if (data_ready == 1)
-      {
+      //if(writeOrder[0] && writeOrder[1] && writeOrder[2] && writeOrder[3])
+      //{
           //fprintf(stderr, "[ INFO ] Writing data to stdout, buff ind:%lld \n",read_buff_ind);
 
-          if (last_noise_source_state != noise_source_state)
+          /*if (last_noise_source_state != noise_source_state)
           {
               rtl_rec = &rtl_receivers[0];
               if (noise_source_state == 1)
@@ -371,35 +387,31 @@ int main( int argc, char** argv )
 	          rtlsdr_set_gpio(rtl_rec->dev, 0, 0);
           }
 
-          last_noise_source_state = noise_source_state;
+          last_noise_source_state = noise_source_state;*/
+          //Adding a delay seems to help stop problems with the sync being lost
+          //usleep(1000000);
 
           for(int i=0; i < NUM_CH; i++)
           {
+              writeOrder[i] = false;
+
               rtl_rec = &rtl_receivers[i];
               fwrite(rtl_rec->buffer, BUFF_LEN, 1, stdout);
-              //fflush(stdout);
+              fflush(stdout);
           }
-          writeOrder[0] = false;
+          /*writeOrder[0] = false;
           writeOrder[1] = false;
           writeOrder[2] = false;
-          writeOrder[3] = false;
-          fflush(stdout);
+          writeOrder[3] = false;*/
+          //fflush(stdout);
 
           /* We need to reconfigure the tuner, so the async read must be stopped*/
-          if(reconfig_trigger==1)
+          /*if(reconfig_trigger==1)
           {
-            for(int i=0; i<NUM_CH; i++)
-            {                
-                if(rtlsdr_cancel_async(rtl_receivers[i].dev) != 0)
-                {
-                    fprintf(stderr, "[ ERROR ]  Async read stop failed: %s\n", strerror(errno));                
-                }
-                //fprintf(stderr, "[ INFO ] Async read stopped at device:%d\n",i);
-            }
             reconfig_trigger=0;
-          }
+          }*/
 
-      }
+      //}
      
      
      

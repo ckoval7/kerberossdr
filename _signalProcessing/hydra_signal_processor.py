@@ -158,7 +158,7 @@ class SignalProcessor(QtCore.QThread):
 
             # Download samples
             #if(self.en_sync or self.en_spectrum):
-            time.sleep(0.25) # You can play with this value, but it may affect stability
+            #time.sleep(0.25) # You can play with this value, but it may affect stability
 
             self.module_receiver.download_iq_samples()
 

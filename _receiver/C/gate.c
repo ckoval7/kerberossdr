@@ -69,9 +69,8 @@ void * fifo_read_tf(void* arg)
 int main(int argc, char** argv)
 {
 
-    static char buf[262144 * 4 * 30];
-
-    setvbuf(stdout, buf, _IOFBF, sizeof(buf));
+    //static char buf[262144 * 4 * 30];
+    //setvbuf(stdout, buf, _IOFBF, sizeof(buf));
 
 
     BUFFER_SIZE = atoi(argv[1]) * 1024 * 4;
