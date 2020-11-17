@@ -9,6 +9,9 @@ You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
 <h4>Ubuntu 20.04 Users NOTE:</h4>
 
 The Qt5 Expanded XML version is available here: https://github.com/ckoval7/kerberossdr/tree/PyQt5_Extended_XML
+* `git clone https://github.com/ckoval7/kerberossdr.git`
+* `cd kerberossdr`
+* `git checkout PyQt5_Extended_XML`
 
 <h3>Please see the software tutorial at www.rtl-sdr.com/ksdr</h3>
 
