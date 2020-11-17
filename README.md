@@ -1,4 +1,4 @@
-<h4>Note:</h4>
+<h3>Note:</h3>
 You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file.
 
 <h4>Change Log</h4>
