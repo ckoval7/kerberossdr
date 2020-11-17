@@ -1,3 +1,6 @@
+<h4>Note:</h4>
+You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file.
+
 <h4>Change Log</h4>
 
 * Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
