@@ -1,10 +1,18 @@
 #!/bin/bash
 
 BUFF_SIZE=256 #Must be a power of 2. Normal values are 128, 256. 512 is possible on a fast PC.
-IPADDR="0.0.0.0"
 IPPORT="8081"
+IPADDR="0.0.0.0"
 
-# set to /dev/null for no logging, set to some file for logfile. You can also set it to the same file. 
+APIPA='169.254'
+
+#done
+STATION_ID="MyStation"
+LAT="0.0" #positive or negative decimal degrees
+LON="0.0" #positive or negative decimal degrees
+HEADING="0" #Relative to true north
+
+# set to /dev/null for no logging, set to some file for logfile. You can also set it to the same file.
 #RTLDAQLOG="rtl_daq.log"
 #SYNCLOG="sync.log"
 #GATELOG="gate.log"
@@ -15,7 +23,7 @@ SYNCLOG="/dev/null"
 GATELOG="/dev/null"
 PYTHONLOG="/dev/null"
 
-# If you want to kill all matching processes on startup without prompt. Otherwise, set it to anything else. 
+# If you want to kill all matching processes on startup without prompt. Otherwise, set it to anything else.
 FORCE_KILL="yes"
 
 NPROC=`expr $(nproc) - 1`
@@ -31,6 +39,8 @@ NPROC=`expr $(nproc) - 1`
 # IPADDR=$(ip addr show wlan0 | grep "inet\b" | awk '{print $2}' | cut -d/ -f1)
 # echo $IPADDR
 # done
+
+echo $IPADDR
 
 ### End of Section ###
 
@@ -48,13 +58,13 @@ trap cleanup 2 6
 
 cleanup() {
 	# Kill all processes that have been spawned by this program.
-	# we know that these processes have "_receiver", "_GUI" and "_webDisplay" in their names. 
-	exec 2> /dev/null           # Suppress "Terminated" message. 
-	sudo pkill -f "_receiver" 
+	# we know that these processes have "_receiver", "_GUI" and "_webDisplay" in their names.
+	exec 2> /dev/null           # Suppress "Terminated" message.
+	sudo pkill -f "_receiver"
 	sudo pkill -f "_GUI"
-	sudo pkill -f "_webDisplay" 
-	
-	# also delete all pipes: 
+	sudo pkill -f "_webDisplay"
+
+	# also delete all pipes:
 	rm -f _receiver/C/gate_control_fifo
         rm -f _receiver/C/sync_control_fifo
         rm -f _receiver/C/rec_control_fifo
@@ -67,13 +77,13 @@ echo '3' | sudo dd of=/proc/sys/vm/drop_caches status=none
 
 echo "Starting KerberosSDR"
 
-# Check for old processes that could interfere, print warning: 
-for string in rtl sim _recei.*sync gate hydra ; do 
-    pgrep -af $string 
-	if [[ $? -eq 0 ]] ; then 
+# Check for old processes that could interfere, print warning:
+for string in rtl sim _recei.*sync gate hydra ; do
+    pgrep -af $string
+	if [[ $? -eq 0 ]] ; then
         if [[ "$FORCE_KILL" != "yes" ]]; then
             read -p "The processes listed above were found and could interfere with the program. Do you want to kill them now? [y|N]" -n1 -r
-            echo # newline. 
+            echo # newline.
 	    fi
 		if [[ "$FORCE_KILL" == "yes" || "$REPLY" =~ ^[Yy]$ ]]
 		then
@@ -81,9 +91,9 @@ for string in rtl sim _recei.*sync gate hydra ; do
 		else
 			echo "OK, not killing these processes. Hope you know what you're doing"
 		fi
-	fi	
+	fi
 done
-		
+
 #sudo kill $(ps aux | grep 'rtl' | awk '{print $2}') 2>$OUTPUT_FD || true
 
 
@@ -96,8 +106,8 @@ sleep 1
 # Create RAMDISK for jpg files
 sudo mount -osize=30m tmpfs /ram -t tmpfs
 
-# Remake Controller FIFOs. Deleting them should not be neccessary after 
-# a clean exit, but why not do it anyway... 
+# Remake Controller FIFOs. Deleting them should not be neccessary after
+# a clean exit, but why not do it anyway...
 rm -f _receiver/C/gate_control_fifo
 mkfifo _receiver/C/gate_control_fifo
 
@@ -113,7 +123,7 @@ curr_user=$(whoami)
 sudo chrt -r 50 taskset -c $NPROC ionice -c 1 -n 0 ./_receiver/C/rtl_daq $BUFF_SIZE 2>$RTLDAQLOG 1| \
 	sudo chrt -r 50 taskset -c $NPROC ./_receiver/C/sync $BUFF_SIZE 2>$SYNCLOG 1| \
 	sudo chrt -r 50 taskset -c $NPROC ./_receiver/C/gate $BUFF_SIZE 2>$GATELOG 1| \
-	sudo nice -n -20 sudo -u $curr_user python3 -O _GUI/hydra_main_window.py $BUFF_SIZE $IPADDR &>$PYTHONLOG &
+	sudo nice -n -20 sudo -u $curr_user python3 -O _GUI/hydra_main_window.py $BUFF_SIZE $IPADDR $STATION_ID $LAT $LON $HEADING &>$PYTHONLOG &
 
 # Start PHP webserver which serves the updating images
 echo "Python Server running at $IPADDR:8080"

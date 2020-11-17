@@ -100,7 +100,7 @@ class ReceiverRTLSDR():
             
             
     def set_sample_offsets(self, sample_offsets):
-        #print("[ INFO ] Python rec: Setting sample offset")
+        print("[ INFO ] Python rec: Setting sample offset")
         delays = [0] + (sample_offsets.tolist())
         self.sync_fifo_descriptor.write(self.sync_delay_byte)
         self.sync_fifo_descriptor.write(pack("i"*4,*delays))

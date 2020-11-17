@@ -31,6 +31,11 @@ import threading
 import subprocess
 import save_settings as settings
 
+import xml.etree.ElementTree as ET
+
+# parser = SafeConfigParser()
+# parser.read(sys.argv[])
+
 np.seterr(divide='ignore')
 
 # Import Kerberos modules
@@ -233,7 +238,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.checkBox_en_td_filter.stateChanged.connect(self.set_PR_params)
         self.checkBox_en_autodet.stateChanged.connect(self.set_PR_params)
         self.checkBox_en_noise_source.stateChanged.connect(self.switch_noise_source)
-        self.checkBox_en_peakhold.stateChanged.connect(self.set_PR_params) 
+        self.checkBox_en_peakhold.stateChanged.connect(self.set_PR_params)
 
 
         # Connect spinbox signals
@@ -271,7 +276,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.module_signal_processor.signal_overdrive.connect(self.power_level_update)
         self.module_signal_processor.signal_period.connect(self.period_time_update)
         self.module_signal_processor.signal_spectrum_ready.connect(self.spectrum_plot)
-        self.module_signal_processor.signal_sync_ready.connect(self.delay_plot)
+        self.module_signal_processor.signal_sync_ready.connect(self.sync_ready)#delay_plot)
         self.module_signal_processor.signal_DOA_ready.connect(self.DOA_plot)
         self.module_signal_processor.signal_PR_ready.connect(self.RD_plot)
         # -> Set default confiration for the signal processing module
@@ -290,24 +295,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.en_peakhold = False
 
 
-
-        #self.spectrum_plot()
-        #self.delay_plot()
-        #self.DOA_plot()
-        #self.RD_plot()
-
-
         # Set default confiuration for the GUI components
         self.set_default_configuration()
 
         self.ip_addr = sys.argv[2]
         threading.Thread(target=run, kwargs=dict(host=self.ip_addr, port=8080, quiet=True, debug=False, server='paste')).start()
-
-    #-----------------------------------------------------------------
-    #
-    #-----------------------------------------------------------------
-
-
 
 
     def set_default_configuration(self):
@@ -326,6 +318,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif ant_arrangement_index == "UCA":
             ant_spacing = ((ant_meters/wave_length)/math.sqrt(2))
+        print(ant_spacing)
 
         return ant_spacing
 
@@ -343,15 +336,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_sync_params(self):
         if self.checkBox_en_sync_display.checkState():
+            #Ant 1 Disabled
+            try:
+                GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
+            except:
+                pass
             self.module_signal_processor.en_sync = True
         else:
             self.module_signal_processor.en_sync = False
+            #Ant 1 Enabled
+            try:
+                GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+            except:
+                pass
     def set_spectrum_params(self):
         if self.checkBox_en_spectrum.checkState():
             self.module_signal_processor.en_spectrum = True
         else:
             self.module_signal_processor.en_spectrum = False
-
 
     def pb_rec_reconfig_clicked(self):
         center_freq = self.doubleSpinBox_center_freq.value() *10**6
@@ -399,6 +401,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             self.module_signal_processor.noise_checked = False
             self.module_receiver.switch_noise_source(0)
+
+    def sync_ready(self):
+        if self.checkBox_en_sync_display.isChecked(): self.delay_plot()
+
     def set_iq_preprocessing_params(self):
         """
             Update IQ preprocessing parameters
@@ -531,7 +537,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if self.pushButton_proc_control.text() == "Start processing":
             self.pushButton_proc_control.setText("Stop processing")
 
-
             self.module_signal_processor.start()
 
         elif self.pushButton_proc_control.text() == "Stop processing":
@@ -565,6 +570,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             green_text += ("</span>")
             self.label_power_level.setText(green_text)
     def period_time_update(self, update_period):
+        self.update_delay = update_period
         if update_period > 1:
             self.label_update_rate.setText("%.1f s" %update_period)
         else:
@@ -650,7 +656,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.sync_time = currentTime
             self.export_sync.export('/ram/sync.jpg')
 
-
     def DOA_plot_helper(self, DOA_data, incident_angles, log_scale_min=None, color=(255, 199, 15), legend=None):
 
         DOA_data = np.divide(np.abs(DOA_data), np.max(np.abs(DOA_data))) # normalization
@@ -664,7 +669,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         plot = self.plotWidget_DOA.plot(incident_angles, DOA_data, pen=pg.mkPen(color, width=2))
         return DOA_data
-
 
     def DOA_plot(self):
 
@@ -746,15 +750,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             DOA = np.rad2deg(np.angle(DOA_avg_c))
 
             # Update DOA results on the compass display
-            #print("[ INFO ] Python GUI: DOA results :",DOA_results)
+            #print("[ INFO ] Python GUI: DOA results :",DOA_results).
+
+            #Keeping DOA results reversed for App compatiblity
             if DOA < 0:
                 DOA += 360
             #DOA = 360 - DOA
             DOA_str = str(int(DOA))
-            html_str = "<DATA>\n<DOA>"+DOA_str+"</DOA>\n<CONF>"+str(int(confidence_sum))+"</CONF>\n<PWR>"+str(np.maximum(0, max_power_level))+"</PWR>\n</DATA>"
-            self.DOA_res_fd.seek(0)
-            self.DOA_res_fd.write(html_str)
-            self.DOA_res_fd.truncate()
+            #print(DOA_str, str(int(confidence_sum)), str(np.maximum(0, max_power_level)))
+            self.wr_xml(str(int(DOA)), str(int(confidence_sum)), str(np.maximum(0, max_power_level)))
+            # html_str = "<DATA>\n<DOA>"+DOA_str+"</DOA>\n<CONF>"+str(int(confidence_sum))+"</CONF>\n<PWR>"+str(np.maximum(0, max_power_level))+"</PWR>\n</DATA>"
+            # self.DOA_res_fd.seek(0)
+            # self.DOA_res_fd.write(html_str)
+            # self.DOA_res_fd.truncate()
             #print("[ INFO ] Python GUI: DOA results writen:",html_str)
 
         #self.DOA_res_fd.close()
@@ -764,7 +772,41 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.DOA_time = currentTime
             self.export_DOA.export('/ram/doa.jpg')
 
+    def wr_xml(self, doa, conf, pwr):
+        station_id = sys.argv[3]
+        latitude = sys.argv[4]
+        longitude = sys.argv[5]
+        heading = sys.argv[6]
+        epoch_time = int(1000 * round(time.time(), 3))
+        # create the file structure
+        data = ET.Element('DATA')
+        xml_st_id = ET.SubElement(data, 'STATION_ID')
+        xml_time = ET.SubElement(data, 'TIME')
+        xml_freq = ET.SubElement(data, 'FREQUENCY')
+        xml_location = ET.SubElement(data, 'LOCATION')
+        xml_latitide = ET.SubElement(xml_location, 'LATITUDE')
+        xml_longitude = ET.SubElement(xml_location, 'LONGITUDE')
+        xml_heading = ET.SubElement(xml_location, 'HEADING')
+        xml_doa = ET.SubElement(data, 'DOA')
+        xml_pwr = ET.SubElement(data, 'PWR')
+        xml_conf = ET.SubElement(data, 'CONF')
 
+        xml_st_id.text = str(station_id)
+        xml_time.text = str(epoch_time)
+        xml_freq.text = str(self.doubleSpinBox_center_freq.value())
+        xml_latitide.text = str(latitude)
+        xml_longitude.text = str(longitude)
+        xml_heading.text = str(heading)
+        xml_doa.text = doa
+        xml_pwr.text = pwr
+        xml_conf.text = conf
+
+        # create a new XML file with the results
+        html_str = ET.tostring(data, encoding="unicode")
+        self.DOA_res_fd.seek(0)
+        self.DOA_res_fd.write(html_str)
+        self.DOA_res_fd.truncate()
+        #print("Wrote XML")
 
     def RD_plot(self):
         """
@@ -803,7 +845,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.CAFMatrixOld = CAFMatrixNew
                 CAFMatrix = CAFMatrixNew
             else:
-                self.CAFMatrixOld = CAFMatrix                
+                self.CAFMatrixOld = CAFMatrix
 
             CAFMatrixLog = 20 * np.log10(CAFMatrix)  # Change to logscale
 
@@ -948,10 +990,6 @@ def reboot_program():
     form.DOA_res_fd.close()
     subprocess.call(['./run.sh'])
 
-#@route('/static/:path#.+#', name='static')
-#def static(path):
-    #return static_file(path, root='static')
-
 @route('/static/<filepath:path>', name='static')
 def server_static(filepath):
     return static_file(filepath, root='./static')
@@ -979,7 +1017,7 @@ def pr():
     est_win = form.spinBox_cfar_est_win.value()
     guard_win = form.spinBox_cfar_guard_win.value()
     thresh_det = form.doubleSpinBox_cfar_threshold.value()
-    
+
     en_peakhold = form.checkBox_en_peakhold.checkState()
 
     ip_addr = form.ip_addr
@@ -1040,7 +1078,7 @@ def do_pr():
 
     thresh_det = request.forms.get('thresh_det')
     form.doubleSpinBox_cfar_threshold.setProperty("value", thresh_det)
-    
+
     en_peakhold = request.forms.get('en_peakhold')
     form.checkBox_en_peakhold.setChecked(True if en_peakhold=="on" else False)
 

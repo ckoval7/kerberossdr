@@ -1,5 +1,7 @@
 build/
 views/static/
+token.txt
+tokens.txt
 log_*
 *.so
 *.o
@@ -13,3 +15,6 @@ sim
 sync
 __pycache__
 *.save
+ipaddr.txt
+tokens.txt
+*strace.txt

@@ -102,11 +102,11 @@ function getSize() {
     // Body has 8px of padding on each side
     var width = window.innerWidth - 16;
     var height = window.innerHeight - 16;
-    
+
     // Canvas width & height = 100%
     // Max-width & max-height = 800px
     var size = Math.min(width, height, 800);
-    
+
     return size;
 }
 
@@ -114,10 +114,10 @@ function setCookie() {
     var d = new Date();
     d.setTime(d.getTime() + (10*365*24*60*60*1000)); // ten years from now
     var expires = "expires=" + d.toGMTString();
-    
+
     MIN_PWR = document.getElementById('MIN_PWR').value;
     MIN_CONF = document.getElementById('MIN_CONF').value;
-    
+
     document.cookie = 'MIN_PWR' + "=" + MIN_PWR + ";" + expires + ";path=/";
     document.cookie = 'MIN_CONF' + "=" + MIN_CONF + ";" + expires + ";path=/";
 }
@@ -156,13 +156,13 @@ function init() {
     var canvas = document.getElementById('compass');
     var size = getSize();
     var scale = size/800;
-    
+
     // Set the min power and confidence
     checkCookie();
 
     canvas.width = size;
     canvas.height = size;
-    
+
 
     // Is Canvas supported?
     if (canvas.getContext('2d')) {

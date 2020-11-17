@@ -22,21 +22,21 @@
 <body>
 
     <div class="header">
-        <a class="header_init" id="active" href="/init">Configuration and Spectrum</a> | 
-        <a class="header_sync" href="/sync">Sync</a> | 
-        <a class="header_doa" href="/doa">DOA Estimation</a> | 
+        <a class="header_init" id="active" href="/init">Configuration and Spectrum</a> |
+        <a class="header_sync" href="/sync">Sync</a> |
+        <a class="header_doa" href="/doa">DOA Estimation</a> |
         <a class="header_pr" href="/pr">Passive Radar</a>
     </div>
 
     <div class="card">
         <form action="/init" method="post">
-        
+
             <div class="field">
                 <h2 id="init_title">Receiver Configuration</h2>
             </div>
-        
+
             <input type="hidden" name="rcv_params" value="rcv_params" />
-            
+
             <div class="field">
                 <div class="field-label">
                     <label for="center_freq">Center Frequency [MHz]:</label>
@@ -73,7 +73,7 @@
                     <input id="uniform_gain_id" type="checkbox" name="uniform_gain" value="on" onclick="check_check_box()" {{!'checked="checked"' if uniform_gain >= 1 else ""}}>
                 </div>
             </div>
-            
+
 
             <div class="field">
                 <div class="field-label">
@@ -113,8 +113,8 @@
                     </select>
                 </div>
             </div>
-            
-            
+
+
             <div class="field">
                 <div class="field-label">
                     <label for="gain_2">RX2 Gain [dB]:</label>
@@ -153,8 +153,8 @@
                     </select>
                 </div>
             </div>
-            
-            
+
+
             <div class="field">
                 <div class="field-label">
                     <label for="gain_3">RX3 Gain [dB]:</label>
@@ -193,8 +193,8 @@
                     </select>
                 </div>
             </div>
-            
-            
+
+
             <div class="field">
                 <div class="field-label">
                     <label for="gain_4">RX4 Gain [dB]:</label>
@@ -233,23 +233,23 @@
                     </select>
                 </div>
             </div>
-            
-            
+
+
             <div class="field">
                 <input value="Update Receiver Paramaters" type="submit" class="btn"/>
             </div>
-            
+
 
         </form>
     </div>
 
     <div class="card">
         <form action="/init" method="post">
-        
+
             <div class="field">
                 <h2 id="init_title">IQ Preprocessing</h2>
             </div>
-            
+
             <input type="hidden" name="iq_params" value="iq_params" />
 
             <div class="field">
@@ -260,7 +260,7 @@
                     <input type="checkbox" name="dc_comp" value="on" {{!'checked="checked"' if dc_comp >= 1 else ""}}>
                 </div>
             </div>
-            
+
             <div class="field">
                 <div class="field-label">
                     <label for="filt_bw">Filter BW [kHz]:</label>
@@ -269,7 +269,7 @@
                     <input type="number" value="{{filt_bw}}" step="0.001" name="filt_bw"/>
                 </div>
             </div>
-            
+
             <div class="field">
                 <div class="field-label">
                     <label for="filt_bw">FIR Tap Size:</label>
@@ -278,7 +278,7 @@
                     <input type="number" value="{{fir_size}}" step="1" name="fir_size"/>
                 </div>
             </div>
-            
+
             <div class="field">
                 <div class="field-label">
                     <label for="filt_bw">Decimation:</label>
@@ -287,14 +287,15 @@
                     <input type="number" value="{{decimation}}" step="1" name="decimation"/>
                 </div>
             </div>
-            
+
             <div class="field">
                 <input value="Update IQ Paramaters" type="submit" class="btn"/>
             </div>
-            
+
         </form>
     </div>
 
+<script type="text/javascript" src="/static/refresh_image.js" charset="utf-8" style="float:right"></script>
     <div class="card">
         <form action="/init" method="post">
             <input type="hidden" name="start" value="start" />
@@ -316,7 +317,7 @@
         </form>
         <iframe width=100% height=5% src="http://{{ip_addr}}:8080/stats" seamless></iframe>
     </div>
-    
+
     <div class="card">
         <form action="/init" method="post">
             <input type="hidden" name="start_spec" value="start_spec" />

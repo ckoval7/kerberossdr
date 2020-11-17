@@ -264,10 +264,6 @@ class Ui_MainWindow(object):
         self.comboBox_gain_4.addItem(_fromUtf8(""))
         self.gridLayout_16.addWidget(self.comboBox_gain_4, 6, 1, 1, 1)
 
-
-
-
-
         self.gridLayout_17.addLayout(self.gridLayout_16, 0, 0, 1, 1)
         self.pushButton_set_receiver_config = QtGui.QPushButton(self.groupBox_7)
         self.pushButton_set_receiver_config.setObjectName(_fromUtf8("pushButton_set_receiver_config"))
@@ -679,15 +675,15 @@ class Ui_MainWindow(object):
         self.label_22 = QtGui.QLabel(self.groupBox_6)
         self.label_22.setObjectName(_fromUtf8("label_22"))
         self.gridLayout_14.addWidget(self.label_22, 0, 0, 1, 1)
-        self.gridLayout_15.addLayout(self.gridLayout_14, 2, 0, 1, 1)
+        self.gridLayout_15.addLayout(self.gridLayout_14, 3, 0, 1, 1)
         spacerItem1 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
-        self.gridLayout_15.addItem(spacerItem1, 5, 0, 1, 1)
+        self.gridLayout_15.addItem(spacerItem1, 6, 0, 1, 1)
         self.pushButton_close = QtGui.QPushButton(self.groupBox_6)
         self.pushButton_close.setObjectName(_fromUtf8("pushButton_close"))
-        self.gridLayout_15.addWidget(self.pushButton_close, 4, 0, 1, 1)
+        self.gridLayout_15.addWidget(self.pushButton_close, 5, 0, 1, 1)
         self.pushButton_proc_control = QtGui.QPushButton(self.groupBox_6)
         self.pushButton_proc_control.setObjectName(_fromUtf8("pushButton_proc_control"))
-        self.gridLayout_15.addWidget(self.pushButton_proc_control, 3, 0, 1, 1)
+        self.gridLayout_15.addWidget(self.pushButton_proc_control, 4, 0, 1, 1)
         self.verticalLayout_6.addWidget(self.groupBox_6)
         self.horizontalLayout.addLayout(self.verticalLayout_6)
         self.tabWidget = QtGui.QTabWidget(self.centralwidget)
@@ -759,7 +755,6 @@ class Ui_MainWindow(object):
         self.comboBox_sampling_freq.setCurrentIndex(2)
 
         self.checkBox_en_uniform_gain.setText(_translate("MainWindow", "Uniform Gain", None))
-
 
         self.label_3.setText(_translate("KerberosSDR", "Center frequency [MHz]:", None))
         self.label_18.setText(_translate("KerberosSDR", "RX1 Gain [dB]:", None))

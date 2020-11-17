@@ -1,3 +1,7 @@
+<h4>Ubuntu 20.04 Users NOTE:</h4>
+
+Note that on Ubuntu 20.04 or newer PyQt4 is no longer available. A contributor has created his own modification to the code which uses PyQt5. You can try it at this link https://github.com/rfjohnso/kerberossdr
+
 <h4>Change Log</h4>
 
 * The purpose of this branch is to get ksdr working in the latest kubuntu (and Ubuntu) based linux, which use different libraries (PyQt5 and libffi7). This branch is currently in testing status, but I have successfully gotten it working in both Ubuntu 20.04 LTS and kubuntu 20.04 LTS.
