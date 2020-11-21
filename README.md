@@ -1,10 +1,19 @@
 <h3>Note:</h3>
-You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file.
+You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
+or set the software to use gpsd.
 
 <h4>Change Log</h4>
+* Added gpsd integration. Gets location directly from the pi if a GPS receiver is
+plugged in. USB GPS receivers are surprisingly cheap.
+    * You'll need the gpsd-py3 library. Run `pip3 install gpsd-py3`
+    * edit the `LAT` and `LON` values in `run.sh` to say `"gpsd"`
+    * If you are configuring a stationary receiver `HEADING` should reflect the orientation
+  of your array.
+    * If you are configuring a mobile receiver `HEADING` should say `"gpsd"`
 
-* Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
-  * This new format does not break app compatibility
+* Added expanded XML format which can transmit location and heading data if
+supplied by the user. Added location and heading to run.sh.
+    * This new format does not break app compatibility.
 
 <h4>Ubuntu 20.04 Users NOTE:</h4>
 
@@ -30,16 +39,7 @@ The Qt5 Expanded XML version is available here: https://github.com/ckoval7/kerbe
 
 3. <h4>Install Dependencies via pip3:</h4>
 
-  `pip3 install numpy`<br>
-  `pip3 install matplotlib`<br>
-  `pip3 install scipy`<br>
-  `pip3 install cairocffi`<br>
-  `pip3 install pyapril`<br>
-  `pip3 install pyargus`<br>
-  `pip3 install pyqtgraph`<br>
-  `pip3 install peakutils`<br>
-  `pip3 install bottle`<br>
-  `pip3 install paste`<br>
+  `pip3 install gpsd-py3 numpy matplotlib scipy cairocffi pyapril pyargus pyqtgraph peakutils bottle paste`
 
 4. <h4>Install RTL-SDR-Kerberos Drivers</h4>
 

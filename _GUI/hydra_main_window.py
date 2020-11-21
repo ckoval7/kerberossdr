@@ -30,13 +30,16 @@ from bottle import route, run, request, get, post, redirect, template, static_fi
 import threading
 import subprocess
 import save_settings as settings
-
 import xml.etree.ElementTree as ET
 
 # parser = SafeConfigParser()
 # parser.read(sys.argv[])
 
 np.seterr(divide='ignore')
+
+if sys.argv[4] == "gpsd":
+    import gpsd
+    gpsd.connect()
 
 # Import Kerberos modules
 currentPath = os.path.dirname(os.path.realpath(__file__))
@@ -774,9 +777,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def wr_xml(self, doa, conf, pwr):
         station_id = sys.argv[3]
-        latitude = sys.argv[4]
-        longitude = sys.argv[5]
-        heading = sys.argv[6]
+        if sys.argv[4] == "gpsd":
+            try:
+                packet = gpsd.get_current()
+                latitude, longitude = packet.position()
+                if sys.argv[6] == "gpsd":
+                    heading = packet.movement().get('track')
+                elif sys.argv[6] != None:
+                    heading = sys.argv[6]
+                else:
+                    heading = 0
+            except UserWarning:
+                latitude = longitude = 0.0
+                heading = sys.argv[6] if sys.argv[6] != None else 0
+        else:
+            latitude = sys.argv[4]
+            longitude = sys.argv[5]
+            heading = sys.argv[6]
+
         epoch_time = int(1000 * round(time.time(), 3))
         # create the file structure
         data = ET.Element('DATA')
