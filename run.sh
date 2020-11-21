@@ -8,9 +8,9 @@ APIPA='169.254'
 
 #done
 STATION_ID="MyStation"
-LAT="0.0" #positive or negative decimal degrees
-LON="0.0" #positive or negative decimal degrees
-HEADING="0" #Relative to true north
+LAT="gpsd" #positive or negative decimal degrees OR "gpsd"
+LON="gpsd" #positive or negative decimal degrees OR "gpsd"
+HEADING="0" #Relative to true north for fixed receivers OR "gpsd" for mobile
 
 # set to /dev/null for no logging, set to some file for logfile. You can also set it to the same file.
 #RTLDAQLOG="rtl_daq.log"

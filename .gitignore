@@ -3,6 +3,7 @@ views/static/
 token.txt
 tokens.txt
 log_*
+*.log
 *.so
 *.o
 gate_control_fifo
@@ -18,3 +19,4 @@ __pycache__
 ipaddr.txt
 tokens.txt
 *strace.txt
+test_*
