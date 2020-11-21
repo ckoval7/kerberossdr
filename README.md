@@ -3,16 +3,14 @@ You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
 or set the software to use gpsd.
 
 <h4>Change Log</h4>
-* Added gpsd integration. Gets location directly from the pi if a GPS receiver is
-plugged in. USB GPS receivers are surprisingly cheap.
+
+* Added gpsd integration. Gets location directly from the pi if a GPS receiver is plugged in. USB GPS receivers are surprisingly cheap.
     * You'll need the gpsd-py3 library. Run `pip3 install gpsd-py3`
     * edit the `LAT` and `LON` values in `run.sh` to say `"gpsd"`
-    * If you are configuring a stationary receiver `HEADING` should reflect the orientation
-  of your array.
+    * If you are configuring a stationary receiver `HEADING` should reflect the orientation of your array.
     * If you are configuring a mobile receiver `HEADING` should say `"gpsd"`
 
-* Added expanded XML format which can transmit location and heading data if
-supplied by the user. Added location and heading to run.sh.
+* Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
     * This new format does not break app compatibility.
 
 * The purpose of this branch is to get ksdr working in the latest kubuntu (and Ubuntu) based linux, which use different libraries (PyQt5 and libffi7). This branch is currently in testing status, but I have successfully gotten it working in both Ubuntu 20.04 LTS and kubuntu 20.04 LTS.
