@@ -3,6 +3,7 @@ views/static/
 token.txt
 tokens.txt
 log_*
+*.log
 *.so
 *.o
 gate_control_fifo

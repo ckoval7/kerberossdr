@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "_GUI/hydra_main_window.py", line 54, in <module>
-    from PyQt5 import QtGui, QtCore
-RuntimeError: the PyQt5.QtCore and PyQt4.QtCore modules both wrap the QObject class
