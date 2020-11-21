@@ -18,4 +18,4 @@ __pycache__
 ipaddr.txt
 tokens.txt
 *strace.txt
-test_
+test_*
