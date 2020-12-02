@@ -787,7 +787,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     heading = sys.argv[6]
                 else:
                     heading = 0
-            except UserWarning:
+            except (gpsd.NoFixError, UserWarning):
                 latitude = longitude = 0.0
                 heading = sys.argv[6] if sys.argv[6] != None else 0
         else:

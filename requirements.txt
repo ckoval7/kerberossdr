@@ -1,0 +1,9 @@
+pyAPRiL==1.1.post1
+pyargus==1.0.post3
+matplotlib==3.1.1
+numpy==1.13.3
+scipy==0.19.1
+bottle==0.12.17
+gpsd_py3==0.3.0
+pyqtgraph==0.10.0
+PyQt4==4.11.4
