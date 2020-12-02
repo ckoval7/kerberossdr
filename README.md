@@ -4,6 +4,7 @@ You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
 <h4>Change Log</h4>
 
 * Added gpsd integration. Gets location directly from the pi if a GPS receiver is plugged in. USB GPS receivers are surprisingly cheap.
+    * [Set up gpsd per your OS's Instructions](https://gpsd.gitlab.io/gpsd/installation.html)
     * You'll need the gpsd-py3 library. Run `pip3 install gpsd-py3`
     * edit the `LAT` and `LON` values in `run.sh` to say `"gpsd"`
     * If you are configuring a stationary receiver `HEADING` should reflect the orientation of your array.
