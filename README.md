@@ -1,6 +1,5 @@
 <h3>Note:</h3>
-You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
-or set the software to use gpsd.
+You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file or set the software to use gpsd.
 
 <h4>Change Log</h4>
 
