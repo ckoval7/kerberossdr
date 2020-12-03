@@ -30,16 +30,26 @@ from bottle import route, run, request, get, post, redirect, template, static_fi
 import threading
 import subprocess
 import save_settings as settings
+
 import xml.etree.ElementTree as ET
+gpio_error = None
+try:
+    import RPi.GPIO as GPIO
+    GPIO.setwarnings(False)
+    GPIO.setmode(GPIO.BOARD)
+    ant_control_pins = (16,18)
+    GPIO.setup(ant_control_pins, GPIO.OUT)
+
+    #Ant 1 Enabled
+    GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+except ModuleNotFoundError as e:
+    gpio_error = e
+    print("Cannot import GPIO. Maybe not on a pi?")
 
 # parser = SafeConfigParser()
 # parser.read(sys.argv[])
 
 np.seterr(divide='ignore')
-
-if sys.argv[4] == "gpsd":
-    import gpsd
-    gpsd.connect()
 
 # Import Kerberos modules
 currentPath = os.path.dirname(os.path.realpath(__file__))
@@ -228,6 +238,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Connect checkbox signals
         self.checkBox_en_uniform_gain.stateChanged.connect(self.pb_rec_reconfig_clicked)
+        #self.checkBox_en_autocal.stateChanged.connect(self.pb_rec_reconfig_clicked)
         self.checkBox_en_sync_display.stateChanged.connect(self.set_sync_params)
         self.checkBox_en_spectrum.stateChanged.connect(self.set_spectrum_params)
         self.checkBox_en_DOA.stateChanged.connect(self.set_DOA_params)
@@ -396,6 +407,22 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.module_signal_processor.center_freq=self.doubleSpinBox_center_freq.value() *10**6
         self.module_receiver.reconfigure_tuner(center_freq, sample_rate, gain)
+        global gpio_error
+        if self.checkBox_en_autocal.checkState() and gpio_error == None:
+            self.label_autocal_status.setText("Ready")
+            time.sleep(1)
+            self.auto_cal()
+        elif gpio_error != None:
+            # red_text = '<span style="font-size:8pt; font-weight:600; color:#ff0000;">No GPIO</span>'
+            # print(red_text)
+            # red_text += "No GPIO"
+            # print(red_text)
+            # red_text += ("</span>")
+            # print(red_text)
+            self.label_autocal_status.setText("No GPIO")
+            print("Cannot AutoCal, GPIO not available")
+        else:
+            self.label_autocal_status.setText("Off")
 
     def switch_noise_source(self):
         if self.checkBox_en_noise_source.checkState():
@@ -407,6 +434,52 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def sync_ready(self):
         if self.checkBox_en_sync_display.isChecked(): self.delay_plot()
+
+    def auto_cal(self):
+        if self.pushButton_proc_control.text() == "Stop processing":
+            try:
+                #Pre-cal setup:
+                self.label_autocal_status.setText("Setup")
+                self.set_default_configuration()
+                ##Ant 1 Disabled
+                GPIO.output(ant_control_pins, (GPIO.LOW, GPIO.LOW))
+                ##DC Comp Off
+                self.module_receiver.en_dc_compensation = False
+                ##Tap size  to 0
+                tap_size = 0
+                bw = self.doubleSpinBox_filterbw.value() * 10**3  # ->[kHz]
+                self.module_receiver.set_fir_coeffs(tap_size, bw)
+                ##decimation to 1
+                self.module_receiver.decimation_ratio = 1
+                self.module_signal_processor.fs = self.module_receiver.fs/self.module_receiver.decimation_ratio
+                #Run Cal
+                sleep_timer = 3
+                self.module_receiver.switch_noise_source(1)
+                self.label_autocal_status.setText("Enabling Sync")
+                self.module_signal_processor.en_sync = True
+                time.sleep(sleep_timer)
+                self.label_autocal_status.setText("Sample Offset")
+                self.module_signal_processor.en_sample_offset_sync=True
+                time.sleep(sleep_timer)
+                self.label_autocal_status.setText("Cal IQ")
+                self.module_signal_processor.en_calib_iq=True
+                time.sleep(sleep_timer)
+                #Post-cal teardown:
+                self.label_autocal_status.setText("Cleanup")
+                self.module_signal_processor.en_sync = False
+                ##Restore User Settings
+                self.module_receiver.switch_noise_source(0)
+                self.set_iq_preprocessing_params()
+                ##Ant 1 Enabled
+                GPIO.output(ant_control_pins, (GPIO.HIGH, GPIO.LOW))
+                self.label_autocal_status.setText("Success")
+                print("Auto-Cal Success")
+            except NameError:
+                # red_text = "<span style=\" font-size:8pt; font-weight:600; color:#ff0000;\" >"
+                # red_text += "No GPIO"
+                # red_text += ("</span>")
+                self.label_autocal_status.setText("No GPIO")
+                print("Cannot AutoCal, GPIO not available")
 
     def set_iq_preprocessing_params(self):
         """
@@ -1244,6 +1317,7 @@ def init():
     gain_index_2 = int(form.comboBox_gain_2.currentIndex())
     gain_index_3 = int(form.comboBox_gain_3.currentIndex())
     gain_index_4 = int(form.comboBox_gain_4.currentIndex())
+    autocal = form.checkBox_en_autocal.checkState()
     dc_comp = form.checkBox_en_dc_compensation.checkState()
     filt_bw = form.doubleSpinBox_filterbw.value()
     fir_size = form.spinBox_fir_tap_size.value()
@@ -1253,6 +1327,7 @@ def init():
     return template ('init.tpl', {'center_freq':center_freq,
 				'samp_index':samp_index,
                 'uniform_gain':uniform_gain,
+                'autocal' :autocal,
 				'gain_index':gain_index,
 				'gain_index_2':gain_index_2,
 				'gain_index_3':gain_index_3,
@@ -1274,6 +1349,9 @@ def do_init():
 
         uniform_gain = request.forms.get('uniform_gain')
         form.checkBox_en_uniform_gain.setChecked(True if uniform_gain=="on" else False)
+
+        autocal = request.forms.get('autocal')
+        form.checkBox_en_autocal.setChecked(True if autocal=="on" else False)
 
         if uniform_gain == "on":
             gain_index = request.forms.get('gain')
@@ -1350,6 +1428,10 @@ def do_init():
 def stats():
 
     upd_rate = form.label_update_rate.text()
+    # try:
+    #     autocal_status = form.label_autocal_status.text().split(">")[1].split("<")[0]
+    # except IndexError:
+    autocal_status = form.label_autocal_status.text()
 
     if(form.module_receiver.overdrive_detect_flag):
        ovr_drv = "YES"
@@ -1357,7 +1439,7 @@ def stats():
        ovr_drv = "NO"
 
     return template ('stats.tpl', {'upd_rate':upd_rate,
-				'ovr_drv':ovr_drv})
+				'ovr_drv':ovr_drv, 'autocal_status':autocal_status})
 
 init_settings()
 app.exec_()

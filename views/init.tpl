@@ -45,6 +45,7 @@
                     <input type="number" value="{{center_freq}}" min="24" max="1700" step="0.0001" name="center_freq"/>
                 </div>
             </div>
+  <input id="autocal" type="checkbox" name="autocal" value="on" {{!'checked="checked"' if autocal >= 1 else ""}}> Auto calibration<br>
 
             <div class="field">
                 <div class="field-label">
