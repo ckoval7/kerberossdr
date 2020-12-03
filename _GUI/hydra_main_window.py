@@ -321,7 +321,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif ant_arrangement_index == "UCA":
             ant_spacing = ((ant_meters/wave_length)/math.sqrt(2))
-        #print(ant_spacing)
+        print(ant_spacing)
 
         return ant_spacing
 
