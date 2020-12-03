@@ -33,7 +33,6 @@ import save_settings as settings
 
 import xml.etree.ElementTree as ET
 
-
 if sys.argv[4] == "gpsd":
     import gpsd
     gpsd.connect()
