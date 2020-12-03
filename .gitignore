@@ -19,3 +19,4 @@ ipaddr.txt
 tokens.txt
 *strace.txt
 test_*
+*.log

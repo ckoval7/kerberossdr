@@ -32,6 +32,12 @@ import subprocess
 import save_settings as settings
 
 import xml.etree.ElementTree as ET
+
+
+if sys.argv[4] == "gpsd":
+    import gpsd
+    gpsd.connect()
+
 gpio_error = None
 try:
     import RPi.GPIO as GPIO
@@ -332,7 +338,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         elif ant_arrangement_index == "UCA":
             ant_spacing = ((ant_meters/wave_length)/math.sqrt(2))
-        print(ant_spacing)
+        # print(ant_spacing)
 
         return ant_spacing
 
