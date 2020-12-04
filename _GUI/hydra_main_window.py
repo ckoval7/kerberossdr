@@ -783,7 +783,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 latitude, longitude = packet.position()
                 if sys.argv[6] == "gpsd":
                     heading = packet.movement().get('track')
-                elif sys.argv[6] != None:
+                elif sys.argv[6].isnumeric():
                     heading = sys.argv[6]
                 else:
                     heading = 0
