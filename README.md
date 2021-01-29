@@ -1,3 +1,8 @@
+### Antenna Switches available
+[Antenna switches available on Tindie](https://www.tindie.com/products/lakeshorelabs/set-of-4-spdt-rf-switches-with-50-ohm-load/)
+
+Instructions for setup and use will be updated soon.
+
 <h3>Note:</h3>
 You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
 or set the software to use gpsd.
