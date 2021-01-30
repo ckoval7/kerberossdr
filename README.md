@@ -46,11 +46,9 @@ or set the software to use gpsd.
 
   Our Kerberos RTL-SDR driver branch contains code for slightly modified Osmocom RTL-SDR drivers that enable GPIO, disable dithering, and disable zerocopy buffers which seems to cause trouble on some ARM devices.
 
-  `sudo apt-get install libusb-1.0-0-dev git cmake`<br>
-
-  `git clone https://github.com/rtlsdrblog/rtl-sdr-kerberos`<br>
-
   ```
+  sudo apt-get install libusb-1.0-0-dev git cmake
+  git clone https://github.com/rtlsdrblog/rtl-sdr-kerberos
   cd rtl-sdr-kerberos
   mkdir build
   cd build
@@ -59,9 +57,8 @@ or set the software to use gpsd.
   sudo make install
   sudo cp ../rtl-sdr.rules /etc/udev/rules.d/
   sudo ldconfig
+  echo 'blacklist dvb_usb_rtl28xxu' | sudo tee --append /etc/modprobe.d/blacklist-dvb_usb_rtl28xxu.conf
   ```
-
-  `echo 'blacklist dvb_usb_rtl28xxu' | sudo tee --append /etc/modprobe.d/blacklist-dvb_usb_rtl28xxu.conf`
 
 5. <h4>Reboot the Pi.</h4>
 
