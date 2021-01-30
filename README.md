@@ -1,6 +1,10 @@
 ### Antenna Switches available
 [Antenna switches available on Tindie](https://www.tindie.com/products/lakeshorelabs/set-of-4-spdt-rf-switches-with-50-ohm-load/)
 
+Antenna 1 should be connected to GPIO Header pin 16. Antenna 2 should be connected to
+pin 18 even though it's not used at this time. For best isolation, do not leave the
+switch input disconnected.
+
 Instructions for setup and use will be updated soon.
 
 <h3>Note:</h3>
@@ -18,13 +22,6 @@ or set the software to use gpsd.
 
 * Added expanded XML format which can transmit location and heading data if supplied by the user. Added location and heading to run.sh.
     * This new format does not break app compatibility.
-
-<h4>Ubuntu 20.04 Users NOTE:</h4>
-
-The Qt5 Expanded XML version is available here: https://github.com/ckoval7/kerberossdr/tree/PyQt5_Extended_XML
-* `git clone https://github.com/ckoval7/kerberossdr.git`
-* `cd kerberossdr`
-* `git checkout PyQt5_Extended_XML`
 
 <h3>Please see the software tutorial at www.rtl-sdr.com/ksdr</h3>
 
@@ -53,14 +50,16 @@ The Qt5 Expanded XML version is available here: https://github.com/ckoval7/kerbe
 
   `git clone https://github.com/rtlsdrblog/rtl-sdr-kerberos`<br>
 
-  `cd rtl-sdr-kerberos`<br>
-  `mkdir build`<br>
-  `cd build`<br>
-  `cmake ../ -DINSTALL_UDEV_RULES=ON`<br>
-  `make`<br>
-  `sudo make install`<br>
-  `sudo cp ../rtl-sdr.rules /etc/udev/rules.d/`<br>
-  `sudo ldconfig`<br>
+  ```
+  cd rtl-sdr-kerberos
+  mkdir build
+  cd build
+  cmake ../ -DINSTALL_UDEV_RULES=ON
+  make
+  sudo make install
+  sudo cp ../rtl-sdr.rules /etc/udev/rules.d/
+  sudo ldconfig
+  ```
 
   `echo 'blacklist dvb_usb_rtl28xxu' | sudo tee --append /etc/modprobe.d/blacklist-dvb_usb_rtl28xxu.conf`
 
@@ -73,7 +72,8 @@ Install KerberosSDR Demo Software
 
 7. <h4>Clone or unzip the software</h4>
 
-  `git clone https://github.com/rtlsdrblog/kerberossdr`<br>
+  `git clone https://github.com/ckoval7/kerberossdr.git`<br>
+  `git checkout ant_switch_ctrl` <br>
   `cd kerberossdr`<br>
   `sh setup_init.sh`
 
