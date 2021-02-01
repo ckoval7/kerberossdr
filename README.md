@@ -5,7 +5,8 @@ Antenna 1 should be connected to GPIO Header pin 16. Antenna 2 should be connect
 pin 18 even though it's not used at this time. For best isolation, do not leave the
 switch input disconnected.
 
-Instructions for setup and use will be updated soon.
+Instructions can be found here:
+[https://github.com/ckoval7/kerberossdr/wiki/gpio_rf_switches](https://github.com/ckoval7/kerberossdr/wiki/gpio_rf_switches)
 
 <h3>Note:</h3>
 You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
