@@ -8,6 +8,8 @@ switch input disconnected.
 Instructions can be found here:
 [https://github.com/ckoval7/kerberossdr/wiki/gpio_rf_switches](https://github.com/ckoval7/kerberossdr/wiki/gpio_rf_switches)
 
+If you're using this, you may also be interested in [DF-Aggreagtor](https://github.com/ckoval7/df-aggregator)
+
 <h3>Note:</h3>
 You'll need to set your Station ID, Latitude, and Longitude in the `run.sh` file
 or set the software to use gpsd.
@@ -68,7 +70,7 @@ or set the software to use gpsd.
   At this stage we recommend first testing your four tuners with rtl_test. Open four terminal windows, or tabs, and in each window run "rtl_test -d 0", "rtl_test -d 1", "rtl_test -d 2" and "rtl_test -d 3". Ensure that each unit connects and displays no errors.
 Install KerberosSDR Demo Software
 
-7. <h4>Clone or unzip the software</h4>
+7. <h4>Clone the KSDR software</h4>
 
   `git clone https://github.com/ckoval7/kerberossdr.git`<br>
   `git checkout ant_switch_ctrl` <br>
